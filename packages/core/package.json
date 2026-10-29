@@ -1,6 +1,6 @@
 {
   "name": "@imaptransfer/core",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Engine for backing up, restoring and migrating IMAP accounts",
   "license": "MIT",
   "type": "module",
