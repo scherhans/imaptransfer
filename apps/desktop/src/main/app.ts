@@ -8,7 +8,7 @@ import { registerIpc } from './ipc';
 import { JobRunner } from './jobs';
 import { installMenu } from './menu';
 import { SettingsStore } from './settings';
-import { setLanguage, texts } from './texts';
+import { setLanguage, texts, type JobName } from './texts';
 import { checkForUpdates } from './updater';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -104,8 +104,10 @@ function finishedNotice(state: JobState): void {
   if (window?.isFocused() || !Notification.isSupported() || state.status === 'running') return;
   const text = texts();
   const request = state.request;
-  const title = (request.kind === 'restore' || request.kind === 'migrate') && request.sync ? text.sync : (text.jobs[request.kind] ?? text.jobs.backup);
-  new Notification({ title: `${title} ${text.outcome[state.status]}`, body: 'IMAP Transfer' }).show();
+  const job: JobName = (request.kind === 'restore' || request.kind === 'migrate') && request.sync ? 'sync' : request.kind;
+  const name = job === 'sync' ? text.sync : (text.jobs[job] ?? text.jobs.backup);
+  const outcome = text.otherGender?.jobs.includes(job) ? text.otherGender.outcome : text.outcome;
+  new Notification({ title: `${name} ${outcome[state.status]}`, body: 'IMAP Transfer' }).show();
 }
 
 // The app was called "imaptransfer" before it got its name; its data folder moved with it.

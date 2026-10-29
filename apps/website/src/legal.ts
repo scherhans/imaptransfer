@@ -1,5 +1,6 @@
 import { githubUrl, SITE } from './config.ts';
 import type { Lang } from './content.ts';
+import { LIABILITY, liabilityPath } from './paths.ts';
 
 // Legal notice and privacy policy. The operator's details and the paragraphs on hosting, email and
 // rights follow those of textcolumn.com, the operator's other site; the parts on downloads, the
@@ -37,9 +38,6 @@ const FONT_LICENSES = { newsreader: '/assets/fonts/newsreader-OFL.txt', hanken: 
 const TRADEMARKS =
   'Gmail, Outlook, Hotmail, Microsoft 365, iCloud, Yahoo, GMX, WEB.DE, freenet, T-Online, IONOS, STRATO, mittwald, Posteo, mailbox.org, macOS and Windows';
 
-/** The anchor of the section on liability in the legal notice; the download section links to it. */
-export const LIABILITY: Record<Lang, string> = { de: 'haftung', en: 'liability' };
-
 export const LEGAL: Record<Lang, Record<LegalKind, LegalDoc>> = {
   de: {
     imprint: {
@@ -76,7 +74,7 @@ export const LEGAL: Record<Lang, Record<LegalKind, LegalDoc>> = {
           heading: 'Haftung für die App',
           id: LIABILITY.de,
           paragraphs: [
-            'IMAP Transfer wird kostenlos überlassen. Die MIT-Lizenz schließt jede Gewährleistung und Haftung aus. Soweit deutsches Recht gilt, haften wir wie bei einer Schenkung: nur für Vorsatz und grobe Fahrlässigkeit (§ 521 BGB) und für Mängel der App nur, wenn wir sie arglistig verschwiegen haben (§ 524 BGB). Das gilt auch für den Verlust oder die Veränderung von Mails und anderen Daten. Unberührt bleibt die Haftung, die das Gesetz zwingend vorschreibt, etwa nach dem Produkthaftungsgesetz.',
+            'IMAP Transfer wird kostenlos und so bereitgestellt, wie es ist: ohne Gewähr dafür, dass die App fehlerfrei läuft oder für Ihren Zweck taugt. So steht es auch in der MIT-Lizenz. Soweit deutsches Recht gilt, haften wir wie bei einer Schenkung: nur für Vorsatz und grobe Fahrlässigkeit (§ 521 BGB) und für Mängel der App nur, wenn wir sie arglistig verschwiegen haben (§ 524 BGB). Das gilt auch für den Verlust oder die Veränderung von Mails und anderen Daten. Unberührt bleibt die Haftung, die das Gesetz zwingend vorschreibt, etwa nach dem Produkthaftungsgesetz.',
             'Wiederherstellen, Umziehen, Abgleichen und Aufräumen schreiben in ein Postfach; Abgleichen und Aufräumen verschieben dabei Mails in den Papierkorb. Fehler von Servern, Verbindungen oder der App lassen sich nie ganz ausschließen. Sichern Sie Ihre Mails deshalb vor jedem dieser Schritte, und prüfen Sie danach das Ergebnis. Die Sicherung kann IMAP Transfer selbst anlegen.',
           ],
         },
@@ -120,6 +118,7 @@ export const LEGAL: Record<Lang, Record<LegalKind, LegalDoc>> = {
             `Wählen Sie „Mit Microsoft anmelden“, öffnet die App die Anmeldeseite von Microsoft in Ihrem Browser. Dort gilt die [Datenschutzerklärung von Microsoft](${MICROSOFT_PRIVACY}).`,
             `Beim Start fragt die App bei GitHub (${GITHUB_ADDRESS}) nach, ob es eine neuere Version gibt, und lädt sie gegebenenfalls herunter. GitHub erhält dabei Ihre IP-Adresse und die technischen Angaben der Anfrage und verarbeitet sie nach seiner eigenen [Datenschutzerklärung](${GITHUB_PRIVACY}). Rechtsgrundlage ist unser berechtigtes Interesse, Ihnen Fehlerbehebungen und Sicherheitsupdates bereitzustellen (Art. 6 Abs. 1 lit. f DSGVO).`,
             'Darüber hinaus sendet die App nichts: keine Nutzungsstatistik, keine Absturzberichte, kein Konto. Wir erhalten von der App keine Daten.',
+            `IMAP Transfer wird so bereitgestellt, wie es ist, und für Datenverlust haften wir nur beschränkt. Die Einzelheiten stehen im Impressum unter [Haftung für die App](${liabilityPath('de')}).`,
           ],
         },
         {
@@ -183,7 +182,7 @@ export const LEGAL: Record<Lang, Record<LegalKind, LegalDoc>> = {
           heading: 'Liability for the app',
           id: LIABILITY.en,
           paragraphs: [
-            'IMAP Transfer is provided free of charge. The MIT license excludes all warranty and liability. Where German law applies, we are liable as for a gift: only for intent and gross negligence (Section 521 BGB), and for defects of the app only if we fraudulently concealed them (Section 524 BGB). This also applies to the loss or alteration of mail and other data. Liability that the law makes mandatory, such as under the German Product Liability Act, remains unaffected.',
+            'IMAP Transfer is provided free of charge and as is: without any warranty that the app works without errors or suits your purpose. The MIT license says the same. Where German law applies, we are liable as for a gift: only for intent and gross negligence (Section 521 BGB), and for defects of the app only if we fraudulently concealed them (Section 524 BGB). This also applies to the loss or alteration of mail and other data. Liability that the law makes mandatory, such as under the German Product Liability Act, remains unaffected.',
             'Restoring, migrating, syncing and cleaning up write to a mailbox; syncing and cleaning up move messages to the trash. Errors of servers, connections or the app can never be ruled out entirely. Back up your mail before each of these steps, and check the result afterwards. IMAP Transfer can make this backup itself.',
           ],
         },
@@ -227,6 +226,7 @@ export const LEGAL: Record<Lang, Record<LegalKind, LegalDoc>> = {
             `If you choose “Sign in with Microsoft”, the app opens Microsoft’s sign-in page in your browser. Microsoft’s [privacy statement](${MICROSOFT_PRIVACY}) applies there.`,
             `When it starts, the app asks GitHub (${GITHUB_ADDRESS}) whether there is a newer version and, if so, downloads it. GitHub then receives your IP address and the technical details of the request and processes them under its own [privacy statement](${GITHUB_PRIVACY}). The legal basis is our legitimate interest in providing you with bug fixes and security updates (Art. 6(1)(f) GDPR).`,
             'Beyond that, the app sends nothing: no usage statistics, no crash reports, no account. We receive no data from the app.',
+            `IMAP Transfer is provided as is, and our liability for data loss is limited. The details are in the legal notice under [Liability for the app](${liabilityPath('en')}).`,
           ],
         },
         {

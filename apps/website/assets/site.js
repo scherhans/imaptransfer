@@ -1,6 +1,7 @@
-// The landing page's downloads: the button for the visitor's system, copying a checksum, and
-// checking a downloaded file in the browser. Without this script the page still offers every
-// file with its checksum and the commands to check it in a terminal; this only adds.
+// The downloads: the buttons for the visitor's system on the start page, and on the download page
+// copying a checksum and checking a downloaded file in the browser. Without this script the
+// buttons lead to the download page, which still offers every file with its checksum and the
+// commands to check it in a terminal; this only adds.
 (() => {
   const source = document.getElementById('daten');
   if (!source) return;
@@ -30,8 +31,7 @@
     if (!found) return;
     const match = downloads.find((item) => item.platform === found.platform && item.arch === found.arch) ?? downloads.find((item) => item.platform === found.platform);
     if (!match) return;
-    const button = document.getElementById('laden');
-    if (button) {
+    for (const button of document.querySelectorAll('.laden')) {
       button.href = match.url;
       button.setAttribute('download', match.name);
       button.textContent = texts.buttonFor[match.platform];

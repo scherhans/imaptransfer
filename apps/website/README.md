@@ -1,8 +1,9 @@
 # imaptransfer.com
 
-The website of [IMAP Transfer](https://github.com/scherhans/imaptransfer): one landing page
-with the downloads and their SHA-256 checksums, a legal notice and a privacy policy, in English (`/`)
-and German (`/de/`). Static HTML, no framework, no cookies, no tracking, nothing loaded from other
+The website of [IMAP Transfer](https://github.com/scherhans/imaptransfer): a landing page, a
+download page with every installer and its SHA-256 checksum, a legal notice and a privacy policy, in
+English (`/`) and German (`/de/`). The landing page's buttons download the installer for the
+visitor's system; without JavaScript they lead to the download page. Static HTML, no framework, no cookies, no tracking, nothing loaded from other
 servers: fonts and images are served from the site itself.
 
 ## Commands
@@ -68,10 +69,11 @@ this server instead of GitHub.
 | --- | --- |
 | Address, repository, email | `src/config.ts` |
 | The eight installers and their order | `SLOTS` in `src/release.ts` |
-| Texts of the landing page, both languages | `src/content.ts` |
+| Texts of the landing page and the download page, both languages | `src/content.ts` |
+| Where each page lives | `PATHS` in `src/paths.ts` |
 | Legal notice and privacy policy | `src/legal.ts` (update the date when they change) |
 | Icons | `assets/favicon.svg` for the tab, `icons/touch-icon.svg` as the source of the home screen icon; `public/favicon.ico` and `public/apple-touch-icon.png` are made from them by `pnpm --filter imaptransfer-desktop website-icons` and copied to the root |
-| Screenshots | `assets/img/<en\|de>/`, taken at twice the size they are shown; `app-narrow.png` is the phone crop. Made with example data by `pnpm --filter imaptransfer-desktop screenshots website <en\|de>` |
+| Screenshots | `assets/img/<en\|de>/`: `app.png`, its phone crop `app-narrow.png` and `migrate.png`, taken at twice the size they are shown. Made with example data by `pnpm --filter imaptransfer-desktop screenshots website <en\|de>` |
 | Layout and colours | `assets/site.css`, the design decisions in `gestaltung.md` |
 | Platform detection, copying, the checker | `assets/site.js` |
 
