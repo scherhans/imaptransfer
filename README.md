@@ -144,6 +144,10 @@ See [CONTRIBUTING.md](CONTRIBUTING.md), [docs/architecture.md](docs/architecture
 
 IMAP Transfer sichert Mailkonten, spielt Sicherungen zurück und zieht Konten von einem Anbieter zum anderen um. Das alte Konto bleibt dabei, wie es ist: Dort wird nichts gelöscht. Auf Wunsch gleicht es dabei in eine Richtung ab: Was in der Quelle gelöscht oder verschoben wurde, geschieht auch im Ziel, und Mails, die nur im Ziel liegen, bleiben. Die Sicherung ist ein normaler Ordner mit einer `.eml`-Datei pro Mail. Jedes Mailprogramm öffnet sie, auch ohne IMAP Transfer. Die App gibt es auf Deutsch, Englisch, Französisch, Spanisch, Italienisch, Niederländisch und Portugiesisch. Sie richtet sich nach der Sprache des Systems oder nach der, die Sie unten in der Seitenleiste wählen; hell und dunkel ebenso. Ihre Mails bleiben bei Ihnen: keine Cloud, kein Konto, keine Datenweitergabe.
 
+## Support
+
+IMAP Transfer is free and stays free. If it saved you some work, you can support its development on [Buy Me a Coffee](https://buymeacoffee.com/scherhans).
+
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE). IMAP Transfer is provided as is, without warranty; see the license and the [note on liability](https://imaptransfer.com/legal-notice/#liability). Back up your mail before you restore, migrate, sync or clean up.

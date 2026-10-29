@@ -56,8 +56,23 @@ export interface Content {
     terminal: string;
     commands: Record<Platform, string>;
     none: string;
+    /** Under the intro: liability is limited, back up first; the link leads to the liability section. */
+    liability: string;
+    liabilityLink: string;
   };
-  footer: { title: string; text: string; source: string; license: string; imprint: string; privacy: string; top: string };
+  footer: {
+    title: string;
+    text: string;
+    /** The invitation to support, with its button, in the closing scene. */
+    support: string;
+    supportButton: string;
+    supportLink: string;
+    source: string;
+    license: string;
+    imprint: string;
+    privacy: string;
+    top: string;
+  };
 }
 
 export const en: Content = {
@@ -197,10 +212,15 @@ export const en: Content = {
     terminal: 'Or in a terminal:',
     commands: { mac: 'macOS', windows: 'Windows (PowerShell)', linux: 'Linux' },
     none: 'The first version is not out yet. As soon as it is, the buttons below download it, each file with its checksum.',
+    liability: 'IMAP Transfer is free, and liability is limited accordingly. Back up your mail before you restore, migrate, sync or clean up.',
+    liabilityLink: 'About liability',
   },
   footer: {
     title: 'Your mail stays with you.',
     text: 'No telemetry, no account, no cloud. The app only talks to your mail servers, and to GitHub to look for updates.',
+    support: 'IMAP Transfer is free and stays free. If it saved you some work, you can support its development with a coffee.',
+    supportButton: 'Buy me a coffee',
+    supportLink: 'Support',
     source: 'Source code on GitHub',
     license: 'MIT license',
     imprint: 'Legal notice',
@@ -346,10 +366,15 @@ export const de: Content = {
     terminal: 'Oder im Terminal:',
     commands: { mac: 'macOS', windows: 'Windows (PowerShell)', linux: 'Linux' },
     none: 'Die erste Version ist noch nicht erschienen. Sobald sie da ist, laden die Knöpfe unten sie herunter, jede Datei mit ihrer Prüfsumme.',
+    liability: 'IMAP Transfer ist kostenlos, und die Haftung ist entsprechend beschränkt. Sichern Sie Ihre Mails, bevor Sie wiederherstellen, umziehen, abgleichen oder aufräumen.',
+    liabilityLink: 'Mehr zur Haftung',
   },
   footer: {
     title: 'Ihre Mails bleiben bei Ihnen.',
     text: 'Keine Nutzungsstatistik, kein Konto, keine Cloud. Die App spricht nur mit Ihren Mailservern, und mit GitHub, um nach Updates zu sehen.',
+    support: 'IMAP Transfer ist kostenlos und bleibt es. Hat es Ihnen Arbeit erspart, können Sie die Entwicklung mit einem Kaffee unterstützen.',
+    supportButton: 'Einen Kaffee spendieren',
+    supportLink: 'Unterstützen',
     source: 'Quellcode auf GitHub',
     license: 'MIT-Lizenz',
     imprint: 'Impressum',

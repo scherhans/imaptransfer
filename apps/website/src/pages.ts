@@ -1,7 +1,7 @@
 import { githubUrl, SITE } from './config.ts';
 import { CONTENT, type Content, type Lang } from './content.ts';
 import { escape, fill, formatDate, formatSize, groupedChecksum, inline, NOT_FOUND, relative } from './html.ts';
-import { LEGAL, type LegalKind } from './legal.ts';
+import { LEGAL, LIABILITY, type LegalKind } from './legal.ts';
 import { SLOTS, type Download, type Platform, type Release, type Slot } from './release.ts';
 
 export type PageKind = 'home' | LegalKind;
@@ -103,6 +103,7 @@ function footer(c: Content, kind: PageKind | 'notFound', path: string): string {
   const links = [
     `<a href="${githubUrl()}" rel="noopener">${c.footer.source}</a>`,
     `<a href="${githubUrl('/blob/main/LICENSE')}" rel="noopener">${c.footer.license}</a>`,
+    `<a href="${SITE.support}" rel="noopener">${c.footer.supportLink}</a>`,
     `<a href="${relative(path, PATHS.imprint[c.lang])}">${c.footer.imprint}</a>`,
     `<a href="${relative(path, PATHS.privacy[c.lang])}">${c.footer.privacy}</a>`,
     languageLink(c, kind, path),
@@ -110,7 +111,11 @@ function footer(c: Content, kind: PageKind | 'notFound', path: string): string {
   const closing =
     kind === 'home'
       ? `<h2 class="schluss">${escape(c.footer.title)}</h2>
-  <p class="vorspann schluss-text">${escape(c.footer.text)}</p>`
+  <p class="vorspann schluss-text">${escape(c.footer.text)}</p>
+  <div class="unterstuetzen">
+    <p>${escape(c.footer.support)}</p>
+    <a class="knopf knopf-zweit" href="${SITE.support}" rel="noopener">${escape(c.footer.supportButton)}</a>
+  </div>`
       : '';
   return `<footer class="fuss">
   ${closing}
@@ -287,7 +292,10 @@ function downloads(c: Content, path: string, release: Release | null): string {
   return `<section class="abschnitt herunterladen" id="download" aria-labelledby="download-titel">
   <div class="herunterladen-kopf">
     <h2 id="download-titel">${escape(c.download.title)}</h2>
-    <p>${intro}</p>
+    <div class="herunterladen-vorspann">
+      <p>${intro}</p>
+      <p class="klein leise">${escape(c.download.liability)} <a href="${relative(path, `${PATHS.imprint[c.lang]}#${LIABILITY[c.lang]}`)}">${escape(c.download.liabilityLink)}</a></p>
+    </div>
   </div>
   <div class="systeme">
   ${systems}
@@ -360,7 +368,7 @@ export function legalPage(lang: Lang, kind: LegalKind, context: RenderContext): 
   const doc = LEGAL[lang][kind];
   const path = PATHS[kind][lang];
   const sections = doc.sections
-    .map((section) => `${section.heading ? `<h2>${escape(section.heading)}</h2>` : ''}${section.paragraphs.map((text) => `<p>${ownLinks(inline(text), path)}</p>`).join('')}`)
+    .map((section) => `${section.heading ? `<h2${section.id ? ` id="${section.id}"` : ''}>${escape(section.heading)}</h2>` : ''}${section.paragraphs.map((text) => `<p>${ownLinks(inline(text), path)}</p>`).join('')}`)
     .join('\n  ');
   const main = `<article class="rechtliches" aria-labelledby="titel">
   <h1 id="titel">${escape(doc.title)}</h1>

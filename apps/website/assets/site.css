@@ -600,7 +600,7 @@ strong {
   gap: 12px 32px;
 }
 
-.herunterladen-kopf p {
+.herunterladen-vorspann {
   max-width: 64ch;
 }
 
@@ -881,6 +881,18 @@ strong {
 .schluss-text {
   max-width: 44ch;
   margin-top: 24px;
+}
+
+/* The invitation to support: one sentence, its button right below, on the closing line's edge. */
+.unterstuetzen {
+  display: grid;
+  justify-items: start;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.unterstuetzen p {
+  max-width: 52ch;
 }
 
 .fuss-links {

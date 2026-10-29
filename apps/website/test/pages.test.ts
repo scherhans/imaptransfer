@@ -121,6 +121,23 @@ describe('pages', () => {
     assert.match(withRelease.get('/') ?? '', /<a class="sprache" href="de\/" hreflang="de" lang="de"><img class="flagge" src="assets\/flags\/de\.svg" alt=""/);
   });
 
+  it('invite to support on every page as a plain link, and on the start page with a button', () => {
+    for (const [path, html] of withRelease) {
+      assert.ok(html.includes('<a href="https://buymeacoffee.com/scherhans" rel="noopener">'), `${path}: no link to support`);
+    }
+    assert.match(withRelease.get('/de/') ?? '', /<div class="unterstuetzen">[\s\S]*?class="knopf knopf-zweit" href="https:\/\/buymeacoffee\.com\/scherhans" rel="noopener">Einen Kaffee spendieren</);
+    assert.match(withRelease.get('/') ?? '', /class="knopf knopf-zweit" href="https:\/\/buymeacoffee\.com\/scherhans" rel="noopener">Buy me a coffee</);
+  });
+
+  it('point from the downloads to the liability section of the legal notice, before and after the first version', () => {
+    for (const result of [withRelease, withoutRelease]) {
+      assert.ok(result.get('/de/')?.includes('<a href="impressum/#haftung">Mehr zur Haftung</a>'));
+      assert.ok(result.get('/')?.includes('<a href="legal-notice/#liability">About liability</a>'));
+    }
+    assert.match(withRelease.get('/de/impressum/') ?? '', /<h2 id="haftung">Haftung für die App<\/h2><p>[^<]*§ 521 BGB/);
+    assert.match(withRelease.get('/legal-notice/') ?? '', /<h2 id="liability">Liability for the app<\/h2><p>[^<]*Section 521 BGB/);
+  });
+
   it('keep the preview out of search engines and mark it', () => {
     const preview = pages({ release, images }).get('/de/') ?? '';
     assert.match(preview, /<meta name="robots" content="noindex">/);
