@@ -8,7 +8,7 @@ import es from '../src/renderer/src/i18n/es.ts';
 import fr from '../src/renderer/src/i18n/fr.ts';
 import it_ from '../src/renderer/src/i18n/it.ts';
 import nl from '../src/renderer/src/i18n/nl.ts';
-import ptBR from '../src/renderer/src/i18n/pt-BR.ts';
+import ptPT from '../src/renderer/src/i18n/pt-PT.ts';
 
 type Tree = { [key: string]: string | Tree };
 
@@ -28,7 +28,7 @@ const pluralForms = (text: string) => text.split(' | ').length;
 const reference = flatten(en as Tree);
 
 describe('translations', () => {
-  for (const [name, tree] of Object.entries({ de, es, fr, it: it_, nl, 'pt-BR': ptBR })) {
+  for (const [name, tree] of Object.entries({ de, es, fr, it: it_, nl, 'pt-PT': ptPT })) {
     it(`${name} has every key of en, with the same placeholders and plural forms`, () => {
       const translated = flatten(tree as Tree);
       const missing = [...reference.keys()].filter((key) => !translated.has(key));

@@ -4,7 +4,8 @@ import { dirname, join, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, it } from 'node:test';
 import { formatSize, inline, relative } from '../src/html.ts';
-import { homePage, legalPage, notFoundPage, PATHS, type ImageSizes, type RenderContext } from '../src/pages.ts';
+import { homePage, legalPage, notFoundPage, type ImageSizes, type RenderContext } from '../src/pages.ts';
+import { liabilityPath, PATHS } from '../src/paths.ts';
 import { exampleRelease, releaseOf, SLOTS } from '../src/release.ts';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -47,6 +48,7 @@ describe('pages', () => {
       const privacy = relative(path, PATHS.privacy[lang]);
       assert.ok(html.includes(`href="${imprint}"`), `${path}: no link to the legal notice`);
       assert.ok(html.includes(`href="${privacy}"`), `${path}: no link to the privacy policy`);
+      assert.ok(html.includes(`href="${relative(path, liabilityPath(lang))}"`), `${path}: no link to the liability section`);
       if (path !== '/404.html') assert.match(html, /hreflang="de" href="https:\/\/imaptransfer\.com\/de\//, path);
     }
   });
@@ -136,6 +138,8 @@ describe('pages', () => {
     }
     assert.match(withRelease.get('/de/impressum/') ?? '', /<h2 id="haftung">Haftung für die App<\/h2><p>[^<]*§ 521 BGB/);
     assert.match(withRelease.get('/legal-notice/') ?? '', /<h2 id="liability">Liability for the app<\/h2><p>[^<]*Section 521 BGB/);
+    assert.ok(withRelease.get('/de/datenschutz/')?.includes('<a href="../impressum/#haftung">Haftung für die App</a>'));
+    assert.ok(withRelease.get('/privacy/')?.includes('<a href="../legal-notice/#liability">Liability for the app</a>'));
   });
 
   it('keep the preview out of search engines and mark it', () => {

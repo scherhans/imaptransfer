@@ -1,17 +1,9 @@
 import { githubUrl, SITE } from './config.ts';
 import { CONTENT, type Content, type Lang } from './content.ts';
 import { escape, fill, formatDate, formatSize, groupedChecksum, inline, NOT_FOUND, relative } from './html.ts';
-import { LEGAL, LIABILITY, type LegalKind } from './legal.ts';
+import { LEGAL, type LegalKind } from './legal.ts';
+import { liabilityPath, PATHS, type PageKind } from './paths.ts';
 import { SLOTS, type Download, type Platform, type Release, type Slot } from './release.ts';
-
-export type PageKind = 'home' | LegalKind;
-
-/** Where each page lives, per language. English is the root; German lives under /de/. */
-export const PATHS: Record<PageKind, Record<Lang, string>> = {
-  home: { en: '/', de: '/de/' },
-  imprint: { en: '/legal-notice/', de: '/de/impressum/' },
-  privacy: { en: '/privacy/', de: '/de/datenschutz/' },
-};
 
 /** Pixel size of each screenshot, by "lang/name"; the build reads it from the files. */
 export type ImageSizes = Map<string, { width: number; height: number }>;
@@ -27,6 +19,32 @@ const SHIELD = 'M12 3 4.5 6v5.5c0 4.6 3.2 8.2 7.5 9.5 4.3-1.3 7.5-4.9 7.5-9.5V6z
 const ARROW_DOWN = 'M12 4v11m-4.5-4.5L12 15l4.5-4.5M5 19.5h14';
 /** The flag beside the link to a language. The word says it; the flag helps find it. */
 const FLAG: Record<Lang, string> = { en: 'gb', de: 'de' };
+
+/**
+ * A cup of coffee seen from above, on its saucer, with a letter poured into the milk foam: drawn for
+ * the invitation to support. It decorates; the text says it. Its colours are tokens in site.css.
+ */
+const CUP = `<svg class="tasse" viewBox="16 16 136 136" width="136" height="136" aria-hidden="true">
+      <defs>
+        <radialGradient id="tasse-crema" cx="0.42" cy="0.38" r="0.7">
+          <stop offset="0" class="tasse-crema-hell"/>
+          <stop offset="1" class="tasse-crema-dunkel"/>
+        </radialGradient>
+      </defs>
+      <circle class="tasse-schlagschatten" cx="85" cy="88" r="60"/>
+      <circle class="tasse-porzellan" cx="80" cy="80" r="60"/>
+      <circle class="tasse-mulde" cx="80" cy="80" r="47"/>
+      <circle class="tasse-schatten" cx="84" cy="85" r="41"/>
+      <rect class="tasse-porzellan tasse-kante" x="110" y="73" width="28" height="14" rx="7" transform="rotate(28 80 80)"/>
+      <circle class="tasse-porzellan tasse-kante" cx="80" cy="80" r="40"/>
+      <circle class="tasse-kaffee" cx="80" cy="80" r="33"/>
+      <circle fill="url(#tasse-crema)" cx="80" cy="80" r="30.5"/>
+      <path class="tasse-schaum tasse-schaum-rand" d="M57.5 80c-1.5-10 6-16.5 15-16.5 3 0 5-1.5 8-1.5 4 0 6 1.5 9 1.5 8.5 0 14.5 6.5 13.5 16 1 10-5.5 16.5-14 16.5-3 0-5.5 1.5-8.5 1.5s-5.5-1.5-8.5-1.5c-9 0-15-6.5-14.5-16Z"/>
+      <g transform="rotate(-7 80 80)">
+        <rect class="tasse-schaum" x="64" y="69.5" width="32" height="21" rx="5.5"/>
+        <path class="tasse-falz" d="M67 72.5 80 81.5l13-9"/>
+      </g>
+    </svg>`;
 
 function icon(path: string): string {
   return `<svg class="symbol" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${path}"/></svg>`;
@@ -106,6 +124,7 @@ function footer(c: Content, kind: PageKind | 'notFound', path: string): string {
     `<a href="${SITE.support}" rel="noopener">${c.footer.supportLink}</a>`,
     `<a href="${relative(path, PATHS.imprint[c.lang])}">${c.footer.imprint}</a>`,
     `<a href="${relative(path, PATHS.privacy[c.lang])}">${c.footer.privacy}</a>`,
+    `<a href="${relative(path, liabilityPath(c.lang))}">${c.footer.liability}</a>`,
     languageLink(c, kind, path),
   ];
   const closing =
@@ -113,14 +132,19 @@ function footer(c: Content, kind: PageKind | 'notFound', path: string): string {
       ? `<h2 class="schluss">${escape(c.footer.title)}</h2>
   <p class="vorspann schluss-text">${escape(c.footer.text)}</p>
   <div class="unterstuetzen">
-    <p>${escape(c.footer.support)}</p>
+    ${CUP}
+    <div class="unterstuetzen-text">
+      <h3>${escape(c.footer.supportTitle)}</h3>
+      <p>${escape(c.footer.support)}</p>
+    </div>
     <a class="knopf knopf-zweit" href="${SITE.support}" rel="noopener">${escape(c.footer.supportButton)}</a>
   </div>`
       : '';
-  return `<footer class="fuss">
+  return `<footer class="fuss${closing ? ' fuss-schluss' : ''}">
+  <div class="fuss-innen">
   ${closing}
   <ul class="fuss-links">${links.map((link) => `<li>${link}</li>`).join('')}</ul>
-  <p class="klein leise">© 2026 Sebastian Scherhans</p>
+  </div>
 </footer>`;
 }
 
@@ -294,7 +318,7 @@ function downloads(c: Content, path: string, release: Release | null): string {
     <h2 id="download-titel">${escape(c.download.title)}</h2>
     <div class="herunterladen-vorspann">
       <p>${intro}</p>
-      <p class="klein leise">${escape(c.download.liability)} <a href="${relative(path, `${PATHS.imprint[c.lang]}#${LIABILITY[c.lang]}`)}">${escape(c.download.liabilityLink)}</a></p>
+      <p class="klein leise">${escape(c.download.liability)} <a href="${relative(path, liabilityPath(c.lang))}">${escape(c.download.liabilityLink)}</a></p>
     </div>
   </div>
   <div class="systeme">

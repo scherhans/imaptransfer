@@ -57,6 +57,16 @@
   --akzent-dunkel: #0b564d;
   --akzent-tinte: #ffffff;
   --akzent-sanft: #e2f1ee;
+  /* The cup in the footer: porcelain, coffee, crema and milk foam. */
+  --porzellan-mulde: #eef3f1;
+  --porzellan-kante: #d9e3e0;
+  --porzellan-schatten: #cbd9d5;
+  --schlagschatten: #05302a;
+  --kaffee: #4a2e1f;
+  --crema-hell: #b98351;
+  --crema-dunkel: #6b4128;
+  --schaum: #f8efe4;
+  --schaum-falz: #c0915f;
   /* The terminal: the petrol taken to night. */
   --nacht: #10201d;
   --nacht-flaeche: #182c28;
@@ -341,7 +351,7 @@ strong {
 /* Every section: one column of the page width, the same edges. */
 .buehne,
 .abschnitt,
-.fuss {
+.fuss-innen {
   max-width: calc(var(--breite) + 2 * var(--rand));
   margin: 0 auto;
   padding: 0 var(--rand);
@@ -866,10 +876,21 @@ strong {
   white-space: nowrap;
 }
 
-/* Footer: the last line of the page, then the facts. */
+/* Footer: a field in the accent, the colour of the app. On the start page it holds the closing scene,
+   the last line of the page and the invitation to support; on every page the facts. */
 .fuss {
   margin-top: var(--abschnitt);
-  padding-bottom: 48px;
+  padding: clamp(40px, 5vw, 56px) 0;
+  background: var(--akzent);
+  color: var(--akzent-tinte);
+}
+
+.fuss-schluss {
+  padding: clamp(72px, 8vw, 120px) 0 clamp(48px, 5vw, 72px);
+}
+
+.fuss :focus-visible {
+  outline-color: var(--akzent-tinte);
 }
 
 .schluss {
@@ -883,16 +904,87 @@ strong {
   margin-top: 24px;
 }
 
-/* The invitation to support: one sentence, its button right below, on the closing line's edge. */
+/* The invitation to support: a darker panel in the field, the drawn cup, a heading, the button. */
 .unterstuetzen {
   display: grid;
-  justify-items: start;
-  gap: 20px;
-  margin-top: 40px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px clamp(24px, 3vw, 40px);
+  margin-top: clamp(48px, 5vw, 64px);
+  padding: clamp(24px, 3vw, 36px) clamp(24px, 3.5vw, 48px);
+  border-radius: var(--radius);
+  background: var(--akzent-dunkel);
 }
 
-.unterstuetzen p {
-  max-width: 52ch;
+.unterstuetzen-text p {
+  max-width: 46ch;
+  margin-top: 8px;
+}
+
+.tasse {
+  display: block;
+  width: clamp(120px, 11vw, 152px);
+  height: auto;
+}
+
+.tasse-schlagschatten {
+  fill: var(--schlagschatten);
+  opacity: 0.35;
+}
+
+.tasse-porzellan {
+  fill: var(--papier);
+}
+
+.tasse-kante {
+  stroke: var(--porzellan-kante);
+  stroke-width: 1.2;
+}
+
+.tasse-mulde {
+  fill: var(--porzellan-mulde);
+}
+
+.tasse-schatten {
+  fill: var(--porzellan-schatten);
+}
+
+.tasse-kaffee {
+  fill: var(--kaffee);
+}
+
+.tasse-crema-hell {
+  stop-color: var(--crema-hell);
+}
+
+.tasse-crema-dunkel {
+  stop-color: var(--crema-dunkel);
+}
+
+.tasse-schaum {
+  fill: var(--schaum);
+}
+
+.tasse-schaum-rand {
+  opacity: 0.5;
+}
+
+.tasse-falz {
+  fill: none;
+  stroke: var(--schaum-falz);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The support button: white on the field, the brightest thing in it. */
+.fuss .knopf-zweit {
+  border-color: var(--papier);
+}
+
+.fuss .knopf-zweit:hover {
+  border-color: var(--akzent-sanft);
+  background: var(--akzent-sanft);
 }
 
 .fuss-links {
@@ -904,17 +996,22 @@ strong {
   list-style: none;
 }
 
+.fuss-links:first-child {
+  margin-top: 0;
+}
+
 .fuss-links a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   min-height: 44px;
-  color: var(--tinte);
+  color: var(--akzent-tinte);
   font-weight: 600;
 }
 
-.fuss .klein {
-  margin-top: 12px;
+.fuss-links a:hover {
+  color: var(--akzent-tinte);
+  text-decoration-thickness: 2px;
 }
 
 /* The legal pages: one reading column. */
@@ -980,6 +1077,16 @@ strong {
   .umzug-bild {
     order: 2;
   }
+
+  /* The cup stays beside the text; the button moves under it. */
+  .unterstuetzen {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .unterstuetzen .knopf {
+    grid-column: 2;
+    justify-self: start;
+  }
 }
 
 @media (max-width: 960px) {
@@ -1021,6 +1128,19 @@ strong {
 
   .schluss {
     font-size: var(--titel);
+  }
+
+  /* On a phone the panel is one column: cup, text, a button as wide as the thumb wants. */
+  .unterstuetzen {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .unterstuetzen .knopf {
+    grid-column: auto;
+  }
+
+  .tasse {
+    width: 112px;
   }
 
   .vorspann {

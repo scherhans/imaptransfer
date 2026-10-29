@@ -63,7 +63,8 @@ export interface Content {
   footer: {
     title: string;
     text: string;
-    /** The invitation to support, with its button, in the closing scene. */
+    /** The invitation to support, with its heading and button, in the closing scene. */
+    supportTitle: string;
     support: string;
     supportButton: string;
     supportLink: string;
@@ -71,7 +72,7 @@ export interface Content {
     license: string;
     imprint: string;
     privacy: string;
-    top: string;
+    liability: string;
   };
 }
 
@@ -218,14 +219,15 @@ export const en: Content = {
   footer: {
     title: 'Your mail stays with you.',
     text: 'No telemetry, no account, no cloud. The app only talks to your mail servers, and to GitHub to look for updates.',
-    support: 'IMAP Transfer is free and stays free. If it saved you some work, you can support its development with a coffee.',
+    supportTitle: 'Free, and it stays that way',
+    support: 'Did IMAP Transfer save you some work? A coffee supports its development.',
     supportButton: 'Buy me a coffee',
     supportLink: 'Support',
     source: 'Source code on GitHub',
     license: 'MIT license',
     imprint: 'Legal notice',
     privacy: 'Privacy policy',
-    top: 'Back to the top',
+    liability: 'Liability',
   },
 };
 
@@ -372,14 +374,15 @@ export const de: Content = {
   footer: {
     title: 'Ihre Mails bleiben bei Ihnen.',
     text: 'Keine Nutzungsstatistik, kein Konto, keine Cloud. Die App spricht nur mit Ihren Mailservern, und mit GitHub, um nach Updates zu sehen.',
-    support: 'IMAP Transfer ist kostenlos und bleibt es. Hat es Ihnen Arbeit erspart, können Sie die Entwicklung mit einem Kaffee unterstützen.',
+    supportTitle: 'Kostenlos, und das bleibt so',
+    support: 'Hat IMAP Transfer Ihnen Arbeit erspart? Mit einem Kaffee unterstützen Sie die Entwicklung.',
     supportButton: 'Einen Kaffee spendieren',
     supportLink: 'Unterstützen',
     source: 'Quellcode auf GitHub',
     license: 'MIT-Lizenz',
     imprint: 'Impressum',
     privacy: 'Datenschutz',
-    top: 'Nach oben',
+    liability: 'Haftung',
   },
 };
 

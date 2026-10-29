@@ -20,6 +20,10 @@ interface MenuTexts {
   close: string;
 }
 
+type Outcome = Exclude<JobState['status'], 'running'>;
+/** A job as a notification names it: its kind, or a sync for a restore or migration that also takes out what left the source. */
+export type JobName = JobState['request']['kind'] | 'sync';
+
 interface Texts {
   stopQuestion: string;
   stopDetail: string;
@@ -28,7 +32,10 @@ interface Texts {
   jobs: Record<JobState['request']['kind'], string>;
   /** A restore or migration that also takes out what left the source. */
   sync: string;
-  outcome: Record<Exclude<JobState['status'], 'running'>, string>;
+  /** After the job's name: "Backup completed". */
+  outcome: Record<Outcome, string>;
+  /** Where job names have a gender: the jobs whose gender differs from that of `outcome`, and their form of it. */
+  otherGender?: { jobs: JobName[]; outcome: Record<Outcome, string> };
   updateDownloaded: (version: string) => string;
   /** The page the browser shows after the Microsoft sign-in. */
   signedIn: { title: string; text: string };
@@ -139,16 +146,16 @@ const MENUS: Record<Language, MenuTexts> = {
     minimize: 'Minimaliseer',
     close: 'Sluit',
   },
-  'pt-BR': {
-    about: 'Sobre o IMAP Transfer',
+  'pt-PT': {
+    about: 'Acerca do IMAP Transfer',
     hide: 'Ocultar IMAP Transfer',
     hideOthers: 'Ocultar outros',
     showAll: 'Mostrar tudo',
-    quit: 'Encerrar IMAP Transfer',
-    edit: 'Editar',
+    quit: 'Sair do IMAP Transfer',
+    edit: 'Edição',
     undo: 'Desfazer',
     redo: 'Refazer',
-    cut: 'Recortar',
+    cut: 'Cortar',
     copy: 'Copiar',
     paste: 'Colar',
     selectAll: 'Selecionar tudo',
@@ -194,6 +201,7 @@ const TEXTS: Record<Language, Texts> = {
     jobs: { backup: 'Sauvegarde', restore: 'Restauration', migrate: 'Migration', dedupe: 'Nettoyage', verify: 'Vérification', 'export-mbox': 'Export' },
     sync: 'Synchronisation',
     outcome: { completed: 'terminée', cancelled: 'interrompue', failed: 'échouée' },
+    otherGender: { jobs: ['dedupe', 'export-mbox'], outcome: { completed: 'terminé', cancelled: 'interrompu', failed: 'échoué' } },
     updateDownloaded: (version) => `La version ${version} est téléchargée et sera installée au prochain démarrage.`,
     signedIn: { title: 'Connecté', text: 'Vous pouvez fermer cette fenêtre et revenir à IMAP Transfer.' },
     signInFailed: { title: 'Échec de la connexion', text: 'Veuillez réessayer dans IMAP Transfer.' },
@@ -220,6 +228,10 @@ const TEXTS: Record<Language, Texts> = {
     jobs: { backup: 'Backup', restore: 'Ripristino', migrate: 'Migrazione', dedupe: 'Pulizia', verify: 'Verifica', 'export-mbox': 'Esportazione' },
     sync: 'Sincronizzazione',
     outcome: { completed: 'completato', cancelled: 'interrotto', failed: 'non riuscito' },
+    otherGender: {
+      jobs: ['migrate', 'dedupe', 'verify', 'export-mbox', 'sync'],
+      outcome: { completed: 'completata', cancelled: 'interrotta', failed: 'non riuscita' },
+    },
     updateDownloaded: (version) => `La versione ${version} è stata scaricata e verrà installata al prossimo avvio.`,
     signedIn: { title: 'Accesso eseguito', text: 'Puoi chiudere questa finestra e tornare a IMAP Transfer.' },
     signInFailed: { title: 'Accesso non riuscito', text: 'Riprova in IMAP Transfer.' },
@@ -238,18 +250,19 @@ const TEXTS: Record<Language, Texts> = {
     signInFailed: { title: 'Aanmelden mislukt', text: 'Probeer het opnieuw in IMAP Transfer.' },
     menu: MENUS.nl,
   },
-  'pt-BR': {
-    stopQuestion: 'Ainda há uma operação em andamento.',
-    stopDetail: 'Se sair agora, ela será interrompida. A próxima execução continua de onde parou.',
-    keepRunning: 'Deixar em execução',
+  'pt-PT': {
+    stopQuestion: 'Ainda há uma operação a decorrer.',
+    stopDetail: 'Se sair agora, será interrompida. A próxima execução continua onde parou.',
+    keepRunning: 'Deixar a decorrer',
     stopAndQuit: 'Interromper e sair',
-    jobs: { backup: 'Backup', restore: 'Restauração', migrate: 'Migração', dedupe: 'Limpeza', verify: 'Verificação', 'export-mbox': 'Exportação' },
+    jobs: { backup: 'Cópia de segurança', restore: 'Restauro', migrate: 'Migração', dedupe: 'Limpeza', verify: 'Verificação', 'export-mbox': 'Exportação' },
     sync: 'Sincronização',
-    outcome: { completed: 'concluído', cancelled: 'interrompido', failed: 'falhou' },
-    updateDownloaded: (version) => `A versão ${version} foi baixada e será instalada na próxima inicialização.`,
-    signedIn: { title: 'Conectado', text: 'Você pode fechar esta janela e voltar ao IMAP Transfer.' },
-    signInFailed: { title: 'Falha no login', text: 'Tente novamente no IMAP Transfer.' },
-    menu: MENUS['pt-BR'],
+    outcome: { completed: 'concluída', cancelled: 'interrompida', failed: 'falhou' },
+    otherGender: { jobs: ['restore'], outcome: { completed: 'concluído', cancelled: 'interrompido', failed: 'falhou' } },
+    updateDownloaded: (version) => `A versão ${version} foi descarregada e será instalada no próximo arranque.`,
+    signedIn: { title: 'Sessão iniciada', text: 'Pode fechar esta janela e voltar ao IMAP Transfer.' },
+    signInFailed: { title: 'Falha ao iniciar sessão', text: 'Tente novamente no IMAP Transfer.' },
+    menu: MENUS['pt-PT'],
   },
 };
 

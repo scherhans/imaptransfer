@@ -6,7 +6,7 @@ export const LANGUAGES = {
   fr: 'Français',
   it: 'Italiano',
   nl: 'Nederlands',
-  'pt-BR': 'Português (Brasil)',
+  'pt-PT': 'Português',
 } as const;
 
 export type Language = keyof typeof LANGUAGES;
@@ -18,10 +18,16 @@ export function isLanguageChoice(value: unknown): value is LanguageChoice {
   return value === 'system' || (typeof value === 'string' && Object.hasOwn(LANGUAGES, value));
 }
 
+/** A language choice as the settings file holds it; an earlier code for Portuguese still means Portuguese, anything unknown follows the system. */
+export function savedLanguage(value: unknown): LanguageChoice {
+  if (value === 'pt-BR') return 'pt-PT';
+  return isLanguageChoice(value) ? value : 'system';
+}
+
 /** The app's language for a system language such as `de-AT`; anything not translated gets English. */
 export function pickLanguage(system: string): Language {
   const lower = system.toLowerCase();
-  if (lower.startsWith('pt')) return 'pt-BR';
+  if (lower.startsWith('pt')) return 'pt-PT';
   for (const language of ['de', 'es', 'fr', 'it', 'nl'] as const) {
     if (lower.startsWith(language)) return language;
   }
