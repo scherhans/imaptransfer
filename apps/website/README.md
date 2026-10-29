@@ -70,6 +70,7 @@ this server instead of GitHub.
 | The eight installers and their order | `SLOTS` in `src/release.ts` |
 | Texts of the landing page, both languages | `src/content.ts` |
 | Legal notice and privacy policy | `src/legal.ts` (update the date when they change) |
+| Icons | `assets/favicon.svg` for the tab, `icons/touch-icon.svg` as the source of the home screen icon; `public/favicon.ico` and `public/apple-touch-icon.png` are made from them by `pnpm --filter imaptransfer-desktop website-icons` and copied to the root |
 | Screenshots | `assets/img/<en\|de>/`, taken at twice the size they are shown; `app-narrow.png` is the phone crop. Made with example data by `pnpm --filter imaptransfer-desktop screenshots website <en\|de>` |
 | Layout and colours | `assets/site.css`, the design decisions in `gestaltung.md` |
 | Platform detection, copying, the checker | `assets/site.js` |

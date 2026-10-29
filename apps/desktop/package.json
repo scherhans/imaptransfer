@@ -18,6 +18,7 @@
     "test:e2e": "electron test/e2e.mjs",
     "icon": "electron scripts/render-icon.mjs",
     "screenshots": "electron scripts/screenshots.mjs",
+    "website-icons": "electron scripts/website-icons.mjs",
     "dist": "electron-vite build && electron-builder --publish never",
     "dist:dir": "electron-vite build && electron-builder --dir"
   },

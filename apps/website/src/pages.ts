@@ -72,7 +72,9 @@ function head(c: Content, kind: PageKind | 'notFound', path: string, title: stri
   <meta property="og:image" content="${image}">
   <meta property="og:locale" content="${c.locale.replace('-', '_')}">
   <meta name="theme-color" content="#f7f6f3">
-  <link rel="icon" href="${relative(path, '/assets/icon.svg')}" type="image/svg+xml">
+  <link rel="icon" href="${relative(path, '/favicon.ico')}" sizes="32x32">
+  <link rel="icon" href="${relative(path, '/assets/favicon.svg')}" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="${relative(path, '/apple-touch-icon.png')}">
   <link rel="preload" href="${relative(path, '/assets/fonts/newsreader-500.woff2')}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="${relative(path, '/assets/fonts/hanken-grotesk-400.woff2')}" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="${relative(path, '/assets/site.css')}">
