@@ -10,6 +10,8 @@ export type LegalKind = 'imprint' | 'privacy';
 
 export interface LegalSection {
   heading?: string;
+  /** An anchor, for links to this section from other pages. */
+  id?: string;
   paragraphs: string[];
 }
 
@@ -28,10 +30,15 @@ const GITHUB_PRIVACY = 'https://docs.github.com/site-policy/privacy-policies/git
 const MICROSOFT_PRIVACY = 'https://privacy.microsoft.com/privacystatement';
 const GITHUB_ADDRESS = 'GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA';
 const HOSTER = 'Mittwald CM Service GmbH & Co. KG, Königsberger Straße 4-6, 32339 Espelkamp';
+const SUPPORT_SERVICE = 'Publisherr, Inc., 2193 Fillmore Street, San Francisco, CA 94115, USA';
+const SUPPORT_PRIVACY = 'https://buymeacoffee.com/privacy-policy';
 const LICENSE = githubUrl('/blob/main/LICENSE');
 const FONT_LICENSES = { newsreader: '/assets/fonts/newsreader-OFL.txt', hanken: '/assets/fonts/hanken-grotesk-OFL.txt' };
 const TRADEMARKS =
   'Gmail, Outlook, Hotmail, Microsoft 365, iCloud, Yahoo, GMX, WEB.DE, freenet, T-Online, IONOS, STRATO, mittwald, Posteo, mailbox.org, macOS and Windows';
+
+/** The anchor of the section on liability in the legal notice; the download section links to it. */
+export const LIABILITY: Record<Lang, string> = { de: 'haftung', en: 'liability' };
 
 export const LEGAL: Record<Lang, Record<LegalKind, LegalDoc>> = {
   de: {
@@ -63,6 +70,14 @@ export const LEGAL: Record<Lang, Record<LegalKind, LegalDoc>> = {
             ].join('\n'),
             'Jede Installation enthält die vollständige Liste aller Bausteine mit ihren Lizenztexten, im Ordner „licenses“ unter den Ressourcen der App. Die Kommandozeile bringt die Lizenztexte mit ihren Paketen mit.',
             `Diese Website nutzt die Schriften Newsreader (© The Newsreader Project Authors) und Hanken Grotesk (© The Hanken Grotesk Project Authors) unter der SIL Open Font License 1.1. Die Lizenztexte liegen bei den Schriftdateien: [Newsreader](${FONT_LICENSES.newsreader}), [Hanken Grotesk](${FONT_LICENSES.hanken}).`,
+          ],
+        },
+        {
+          heading: 'Haftung für die App',
+          id: LIABILITY.de,
+          paragraphs: [
+            'IMAP Transfer wird kostenlos überlassen. Die MIT-Lizenz schließt jede Gewährleistung und Haftung aus. Soweit deutsches Recht gilt, haften wir wie bei einer Schenkung: nur für Vorsatz und grobe Fahrlässigkeit (§ 521 BGB) und für Mängel der App nur, wenn wir sie arglistig verschwiegen haben (§ 524 BGB). Das gilt auch für den Verlust oder die Veränderung von Mails und anderen Daten. Unberührt bleibt die Haftung, die das Gesetz zwingend vorschreibt, etwa nach dem Produkthaftungsgesetz.',
+            'Wiederherstellen, Umziehen, Abgleichen und Aufräumen schreiben in ein Postfach; Abgleichen und Aufräumen verschieben dabei Mails in den Papierkorb. Fehler von Servern, Verbindungen oder der App lassen sich nie ganz ausschließen. Sichern Sie Ihre Mails deshalb vor jedem dieser Schritte, und prüfen Sie danach das Ergebnis. Die Sicherung kann IMAP Transfer selbst anlegen.',
           ],
         },
       ],
@@ -105,6 +120,13 @@ export const LEGAL: Record<Lang, Record<LegalKind, LegalDoc>> = {
             `Wählen Sie „Mit Microsoft anmelden“, öffnet die App die Anmeldeseite von Microsoft in Ihrem Browser. Dort gilt die [Datenschutzerklärung von Microsoft](${MICROSOFT_PRIVACY}).`,
             `Beim Start fragt die App bei GitHub (${GITHUB_ADDRESS}) nach, ob es eine neuere Version gibt, und lädt sie gegebenenfalls herunter. GitHub erhält dabei Ihre IP-Adresse und die technischen Angaben der Anfrage und verarbeitet sie nach seiner eigenen [Datenschutzerklärung](${GITHUB_PRIVACY}). Rechtsgrundlage ist unser berechtigtes Interesse, Ihnen Fehlerbehebungen und Sicherheitsupdates bereitzustellen (Art. 6 Abs. 1 lit. f DSGVO).`,
             'Darüber hinaus sendet die App nichts: keine Nutzungsstatistik, keine Absturzberichte, kein Konto. Wir erhalten von der App keine Daten.',
+          ],
+        },
+        {
+          heading: 'Unterstützen über Buy Me a Coffee',
+          paragraphs: [
+            `Die Links zum Unterstützen führen zu Buy Me a Coffee, einem Dienst der ${SUPPORT_SERVICE}. Die Website bindet davon nichts ein. Erst wenn Sie einem dieser Links folgen, erhält der Dienst Daten von Ihnen, und es gilt seine [Datenschutzerklärung](${SUPPORT_PRIVACY}). Die Zahlung wickelt dort Stripe ab.`,
+            'Unterstützen Sie uns dort, übermittelt uns Buy Me a Coffee Ihren Namen oder Anzeigenamen, Ihre E-Mail-Adresse, Betrag und Datum sowie Ihre Nachricht, falls Sie eine schreiben. Wir nutzen diese Angaben, um die Zahlung zu verbuchen und Ihnen gegebenenfalls zu antworten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO, für die Buchhaltung Art. 6 Abs. 1 lit. c DSGVO in Verbindung mit den steuerrechtlichen Aufbewahrungspflichten. Wir bewahren die Angaben so lange auf, wie diese Pflichten es verlangen.',
           ],
         },
         {
@@ -157,6 +179,14 @@ export const LEGAL: Record<Lang, Record<LegalKind, LegalDoc>> = {
             `This website uses the typefaces Newsreader (© The Newsreader Project Authors) and Hanken Grotesk (© The Hanken Grotesk Project Authors) under the SIL Open Font License 1.1. The license texts sit next to the font files: [Newsreader](${FONT_LICENSES.newsreader}), [Hanken Grotesk](${FONT_LICENSES.hanken}).`,
           ],
         },
+        {
+          heading: 'Liability for the app',
+          id: LIABILITY.en,
+          paragraphs: [
+            'IMAP Transfer is provided free of charge. The MIT license excludes all warranty and liability. Where German law applies, we are liable as for a gift: only for intent and gross negligence (Section 521 BGB), and for defects of the app only if we fraudulently concealed them (Section 524 BGB). This also applies to the loss or alteration of mail and other data. Liability that the law makes mandatory, such as under the German Product Liability Act, remains unaffected.',
+            'Restoring, migrating, syncing and cleaning up write to a mailbox; syncing and cleaning up move messages to the trash. Errors of servers, connections or the app can never be ruled out entirely. Back up your mail before each of these steps, and check the result afterwards. IMAP Transfer can make this backup itself.',
+          ],
+        },
       ],
     },
     privacy: {
@@ -197,6 +227,13 @@ export const LEGAL: Record<Lang, Record<LegalKind, LegalDoc>> = {
             `If you choose “Sign in with Microsoft”, the app opens Microsoft’s sign-in page in your browser. Microsoft’s [privacy statement](${MICROSOFT_PRIVACY}) applies there.`,
             `When it starts, the app asks GitHub (${GITHUB_ADDRESS}) whether there is a newer version and, if so, downloads it. GitHub then receives your IP address and the technical details of the request and processes them under its own [privacy statement](${GITHUB_PRIVACY}). The legal basis is our legitimate interest in providing you with bug fixes and security updates (Art. 6(1)(f) GDPR).`,
             'Beyond that, the app sends nothing: no usage statistics, no crash reports, no account. We receive no data from the app.',
+          ],
+        },
+        {
+          heading: 'Support via Buy Me a Coffee',
+          paragraphs: [
+            `The links to support IMAP Transfer lead to Buy Me a Coffee, a service of ${SUPPORT_SERVICE}. The website embeds nothing of it. Only when you follow one of these links does the service receive data from you, and its [privacy policy](${SUPPORT_PRIVACY}) applies. Payments there are processed by Stripe.`,
+            'If you support us there, Buy Me a Coffee passes on to us your name or display name, your email address, the amount and date, and your message if you write one. We use this information to book the payment and, where appropriate, to reply to you. The legal basis is Art. 6(1)(b) GDPR, and for bookkeeping Art. 6(1)(c) GDPR together with the retention obligations of tax law. We keep the information as long as these obligations require.',
           ],
         },
         {
