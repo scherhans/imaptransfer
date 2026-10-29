@@ -1,17 +1,9 @@
 import { githubUrl, SITE } from './config.ts';
 import { CONTENT, type Content, type Lang } from './content.ts';
 import { escape, fill, formatDate, formatSize, groupedChecksum, inline, NOT_FOUND, relative } from './html.ts';
-import { LEGAL, LIABILITY, type LegalKind } from './legal.ts';
+import { LEGAL, type LegalKind } from './legal.ts';
+import { liabilityPath, PATHS, type PageKind } from './paths.ts';
 import { SLOTS, type Download, type Platform, type Release, type Slot } from './release.ts';
-
-export type PageKind = 'home' | LegalKind;
-
-/** Where each page lives, per language. English is the root; German lives under /de/. */
-export const PATHS: Record<PageKind, Record<Lang, string>> = {
-  home: { en: '/', de: '/de/' },
-  imprint: { en: '/legal-notice/', de: '/de/impressum/' },
-  privacy: { en: '/privacy/', de: '/de/datenschutz/' },
-};
 
 /** Pixel size of each screenshot, by "lang/name"; the build reads it from the files. */
 export type ImageSizes = Map<string, { width: number; height: number }>;
@@ -106,6 +98,7 @@ function footer(c: Content, kind: PageKind | 'notFound', path: string): string {
     `<a href="${SITE.support}" rel="noopener">${c.footer.supportLink}</a>`,
     `<a href="${relative(path, PATHS.imprint[c.lang])}">${c.footer.imprint}</a>`,
     `<a href="${relative(path, PATHS.privacy[c.lang])}">${c.footer.privacy}</a>`,
+    `<a href="${relative(path, liabilityPath(c.lang))}">${c.footer.liability}</a>`,
     languageLink(c, kind, path),
   ];
   const closing =
@@ -294,7 +287,7 @@ function downloads(c: Content, path: string, release: Release | null): string {
     <h2 id="download-titel">${escape(c.download.title)}</h2>
     <div class="herunterladen-vorspann">
       <p>${intro}</p>
-      <p class="klein leise">${escape(c.download.liability)} <a href="${relative(path, `${PATHS.imprint[c.lang]}#${LIABILITY[c.lang]}`)}">${escape(c.download.liabilityLink)}</a></p>
+      <p class="klein leise">${escape(c.download.liability)} <a href="${relative(path, liabilityPath(c.lang))}">${escape(c.download.liabilityLink)}</a></p>
     </div>
   </div>
   <div class="systeme">

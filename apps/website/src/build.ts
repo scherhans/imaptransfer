@@ -14,7 +14,8 @@ import { dirname, join, relative as relativePath, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { SITE } from './config.ts';
-import { homePage, legalPage, notFoundPage, PATHS, sitemap, type ImageSizes } from './pages.ts';
+import { homePage, legalPage, notFoundPage, sitemap, type ImageSizes } from './pages.ts';
+import { PATHS } from './paths.ts';
 import { pngSize } from './png.ts';
 import { belongsTo, checksumList, DOWNLOADS, exampleRelease, installerName, isFeed, latestVersion, parseInstaller, releaseOf, SLOTS, type LocalFile, type Release } from './release.ts';
 

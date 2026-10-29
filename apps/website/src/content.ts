@@ -71,6 +71,7 @@ export interface Content {
     license: string;
     imprint: string;
     privacy: string;
+    liability: string;
     top: string;
   };
 }
@@ -225,6 +226,7 @@ export const en: Content = {
     license: 'MIT license',
     imprint: 'Legal notice',
     privacy: 'Privacy policy',
+    liability: 'Liability',
     top: 'Back to the top',
   },
 };
@@ -379,6 +381,7 @@ export const de: Content = {
     license: 'MIT-Lizenz',
     imprint: 'Impressum',
     privacy: 'Datenschutz',
+    liability: 'Haftung',
     top: 'Nach oben',
   },
 };
