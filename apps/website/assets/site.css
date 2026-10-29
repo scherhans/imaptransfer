@@ -285,18 +285,19 @@ strong {
   color: var(--tinte);
 }
 
-/* Header: the corners. */
+/* Header: the name on the left, the navigation and the language on the right. */
 .kopf {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  gap: 8px 28px;
   max-width: calc(var(--breite) + 2 * var(--rand));
   margin: 0 auto;
   padding: 22px var(--rand);
 }
 
 .marke {
+  margin-right: auto;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -317,10 +318,34 @@ strong {
   height: 36px;
 }
 
-.kopf-rechts {
+.kopf-nav {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 22px;
+  gap: 4px 24px;
+}
+
+.kopf-nav a:not(.knopf) {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--tinte);
+  font-size: var(--klein);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.kopf-nav a:not(.knopf):hover {
+  color: var(--tinte);
+  text-decoration: underline;
+}
+
+/* The page you are on: its button is marked, not filled. */
+.kopf-nav .knopf[aria-current='page'],
+.kopf-nav .knopf[aria-current='page']:hover {
+  border-color: var(--akzent-sanft);
+  background: var(--akzent-sanft);
+  color: var(--akzent-dunkel);
 }
 
 .sprache {
@@ -497,53 +522,6 @@ main > .abschnitt:first-child {
 
 .antwort p {
   margin-top: 10px;
-}
-
-/* Tables: the one place with lines. */
-.tabelle {
-  width: 100%;
-  border-collapse: collapse;
-  font-variant-numeric: tabular-nums;
-}
-
-.tabelle th,
-.tabelle td {
-  padding: 16px 20px 16px 0;
-  border-bottom: 1px solid var(--linie);
-  text-align: left;
-  vertical-align: top;
-}
-
-.tabelle thead th {
-  padding-top: 0;
-  border-bottom-color: var(--linie-stark);
-  color: var(--tinte-leise);
-  font-size: var(--klein);
-  font-weight: 600;
-}
-
-.tabelle tbody th {
-  font-weight: 600;
-}
-
-/* The heading over the whole width, then the explanation beside the table. */
-.anbieter {
-  display: grid;
-  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-  gap: 36px clamp(40px, 5vw, 88px);
-  align-items: start;
-}
-
-.anbieter h2 {
-  grid-column: 1 / -1;
-}
-
-.anbieter-kopf p + p {
-  margin-top: 20px;
-}
-
-.anbieter-tabelle tbody th {
-  width: 40%;
 }
 
 /* The command line: the page's one dark field. */
@@ -1082,7 +1060,6 @@ main > .abschnitt:first-child {
   .buehne-zeile,
   .sicherung,
   .umzug,
-  .anbieter,
   .kommandozeile,
   .pruefen {
     grid-template-columns: minmax(0, 1fr);
@@ -1145,9 +1122,24 @@ main > .abschnitt:first-child {
     padding-bottom: 14px;
   }
 
-  /* The stage's own button is right below; the header keeps the language. */
-  .kopf-rechts .knopf-klein {
-    display: none;
+  /* The name and the language in the first row, the navigation in the second. The stage's own
+     button follows right below, so here the download is a link like the others. */
+  .kopf-nav {
+    order: 2;
+    width: 100%;
+    gap: 4px 18px;
+  }
+
+  .kopf-nav .knopf:not([aria-current='page']),
+  .kopf-nav .knopf:not([aria-current='page']):hover {
+    padding: 0;
+    border-color: transparent;
+    background: transparent;
+    color: var(--tinte);
+  }
+
+  .kopf-nav .knopf:not([aria-current='page']):hover {
+    text-decoration: underline;
   }
 
   .schluss {
@@ -1186,38 +1178,6 @@ main > .abschnitt:first-child {
 
   .fenster img {
     border-radius: 12px 0 0 12px;
-  }
-
-  .anbieter-tabelle thead {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-
-  .anbieter-tabelle,
-  .anbieter-tabelle tbody,
-  .anbieter-tabelle tr,
-  .anbieter-tabelle tbody th,
-  .anbieter-tabelle td {
-    display: block;
-    width: auto;
-  }
-
-  .anbieter-tabelle tr {
-    padding: 16px 0;
-    border-bottom: 1px solid var(--linie);
-  }
-
-  .anbieter-tabelle tbody th,
-  .anbieter-tabelle td {
-    padding: 0;
-    border: 0;
-  }
-
-  .anbieter-tabelle td {
-    margin-top: 4px;
   }
 
   .kopieren {

@@ -11,7 +11,7 @@ export interface Content {
   /** For dates and numbers. */
   locale: string;
   meta: { title: string; description: string };
-  nav: { skip: string; language: string; download: string };
+  nav: { skip: string; label: string; features: string; cli: string; language: string; download: string };
   preview: string;
   hero: {
     /** The headline as it breaks: two lines on every width. */
@@ -32,11 +32,8 @@ export interface Content {
     stop: { title: string; text: string };
     clean: { title: string; text: string };
     providers: { title: string; text: string };
-    server: { title: string; text: string };
-    /** The link after the answer about servers, to the commands on the download page. */
-    commands: string;
+    gmail: { title: string; text: string };
   };
-  providers: { title: string; lead: string; head: [string, string]; rows: [string, string][]; note: string };
   cli: { title: string; text: string; code: string; exit: string };
   download: {
     /** The download page's title and description for search engines and links. */
@@ -93,7 +90,7 @@ export const en: Content = {
     description:
       'Free, open-source app for macOS, Windows and Linux. Backs up mail accounts as .eml files, restores them and moves them from one provider to another.',
   },
-  nav: { skip: 'Skip to content', language: 'Deutsch', download: 'Download' },
+  nav: { skip: 'Skip to content', label: 'Main', features: 'Features', cli: 'Command line', language: 'Deutsch', download: 'Download' },
   preview: 'Preview with example data. The downloads on this page are not real.',
   hero: {
     title: ['Back up and', 'move your mail'],
@@ -153,26 +150,10 @@ export const en: Content = {
       title: 'Any IMAP provider',
       text: 'Gmail, Outlook, iCloud, GMX, WEB.DE, T-Online, IONOS, Posteo and every other. The app knows their settings and tells you what to prepare.',
     },
-    server: {
-      title: 'On servers too',
-      text: 'The same engine runs on the command line and as a Docker image, for example for a nightly backup on a NAS.',
+    gmail: {
+      title: 'Gmail labels kept',
+      text: 'A message with five labels is stored once and goes back into all five when you restore it.',
     },
-    commands: 'See the commands',
-  },
-  providers: {
-    title: 'Works with your provider',
-    lead: 'Any IMAP server works. For these, the app knows the settings and tells you what to prepare.',
-    head: ['Provider', 'How you sign in'],
-    rows: [
-      ['Gmail', 'An app password. It needs two-step verification.'],
-      ['Outlook.com, Hotmail, Microsoft 365', '“Sign in with Microsoft” in the app. Microsoft no longer accepts passwords for IMAP.'],
-      ['iCloud, Yahoo', 'An app password from the account settings.'],
-      ['GMX, WEB.DE, freenet', 'The normal password, once IMAP access is switched on in the web mail.'],
-      ['T-Online', 'The separate email password, not the login password.'],
-      ['IONOS, STRATO, mittwald, Posteo, mailbox.org', 'The normal password.'],
-      ['Any other provider', 'Server, port and password.'],
-    ],
-    note: 'Passwords and sign-ins are stored encrypted in your system’s key store: Keychain on macOS, DPAPI on Windows, libsecret or KWallet on Linux.',
   },
   cli: {
     title: 'On the command line',
@@ -258,7 +239,7 @@ export const de: Content = {
     description:
       'Kostenlose Open-Source-App für macOS, Windows und Linux. Sichert Mailkonten als .eml-Dateien, spielt sie zurück und zieht sie von einem Anbieter zum anderen um.',
   },
-  nav: { skip: 'Zum Inhalt', language: 'English', download: 'Herunterladen' },
+  nav: { skip: 'Zum Inhalt', label: 'Hauptmenü', features: 'Funktionen', cli: 'Kommandozeile', language: 'English', download: 'Herunterladen' },
   preview: 'Vorschau mit Beispieldaten. Die Downloads auf dieser Seite sind nicht echt.',
   hero: {
     title: ['Mails sichern', 'und umziehen'],
@@ -318,26 +299,10 @@ export const de: Content = {
       title: 'Jeder IMAP-Anbieter',
       text: 'Gmail, Outlook, iCloud, GMX, WEB.DE, T-Online, IONOS, Posteo und alle anderen. Die App kennt die Einstellungen und sagt, was Sie vorbereiten müssen.',
     },
-    server: {
-      title: 'Auch auf dem Server',
-      text: 'Dieselbe Technik läuft auf der Kommandozeile und als Docker-Image, etwa für die nächtliche Sicherung auf dem NAS.',
+    gmail: {
+      title: 'Gmail-Labels bleiben',
+      text: 'Eine Mail mit fünf Labels liegt einmal in der Sicherung und kommt beim Wiederherstellen in alle fünf zurück.',
     },
-    commands: 'Befehle ansehen',
-  },
-  providers: {
-    title: 'Klappt mit Ihrem Anbieter',
-    lead: 'Jeder IMAP-Server geht. Bei diesen kennt die App die Einstellungen und sagt, was Sie vorbereiten müssen.',
-    head: ['Anbieter', 'So melden Sie sich an'],
-    rows: [
-      ['Gmail', 'Mit einem App-Passwort. Dafür braucht es die Anmeldung in zwei Schritten.'],
-      ['Outlook.com, Hotmail, Microsoft 365', 'Mit „Mit Microsoft anmelden“ in der App. Microsoft nimmt für IMAP keine Passwörter mehr an.'],
-      ['iCloud, Yahoo', 'Mit einem App-Passwort aus den Kontoeinstellungen.'],
-      ['GMX, WEB.DE, freenet', 'Mit dem normalen Passwort, sobald der IMAP-Zugriff im Webmailer eingeschaltet ist.'],
-      ['T-Online', 'Mit dem eigenen E-Mail-Passwort, nicht dem Login-Passwort.'],
-      ['IONOS, STRATO, mittwald, Posteo, mailbox.org', 'Mit dem normalen Passwort.'],
-      ['Jeder andere Anbieter', 'Mit Server, Port und Passwort.'],
-    ],
-    note: 'Passwörter und Anmeldungen liegen verschlüsselt im Schlüsselbund Ihres Systems: Keychain unter macOS, DPAPI unter Windows, libsecret oder KWallet unter Linux.',
   },
   cli: {
     title: 'Auf der Kommando\u00adzeile',

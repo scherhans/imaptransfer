@@ -107,13 +107,18 @@ function languageLink(c: Content, kind: PageKind | 'notFound', path: string, cla
   return `<a${className ? ` class="${className}"` : ''} href="${relative(path, target)}" hreflang="${switchTo}" lang="${switchTo}">${flag}${c.nav.language}</a>`;
 }
 
+/** The header on every page: the name leads home, the navigation to the features, the command line and the download page, which says when it is the one shown. */
 function header(c: Content, kind: PageKind | 'notFound', path: string): string {
+  const home = PATHS.home[c.lang];
+  const current = kind === 'download' ? ' aria-current="page"' : '';
   return `<header class="kopf">
-  <a class="marke" href="${relative(path, PATHS.home[c.lang])}"><img src="${relative(path, '/assets/icon.svg')}" alt="" width="36" height="36"><span>IMAP Transfer</span></a>
-  <div class="kopf-rechts">
-    ${languageLink(c, kind, path, 'sprache')}
-    ${kind === 'download' ? '' : `<a class="knopf knopf-klein" href="${relative(path, PATHS.download[c.lang])}">${c.nav.download}</a>`}
-  </div>
+  <a class="marke" href="${relative(path, home)}"><img src="${relative(path, '/assets/icon.svg')}" alt="" width="36" height="36"><span>IMAP Transfer</span></a>
+  <nav class="kopf-nav" aria-label="${escape(c.nav.label)}">
+    <a href="${relative(path, `${home}#backup`)}">${escape(c.nav.features)}</a>
+    <a href="${relative(path, `${home}#cli`)}">${escape(c.nav.cli)}</a>
+    <a class="knopf knopf-klein" href="${relative(path, PATHS.download[c.lang])}"${current}>${escape(c.nav.download)}</a>
+  </nav>
+  ${languageLink(c, kind, path, 'sprache')}
 </header>`;
 }
 
@@ -232,35 +237,19 @@ function migrate(c: Content, path: string, context: RenderContext): string {
 }
 
 /** What people ask before they trust a tool with their mail, each answered in two sentences. */
-function questions(c: Content, path: string): string {
-  const answer = (key: 'stop' | 'clean' | 'providers' | 'server', link = '') => `<div class="antwort">
+function questions(c: Content): string {
+  const answer = (key: 'stop' | 'clean' | 'providers' | 'gmail') => `<div class="antwort">
       <h3>${escape(c.questions[key].title)}</h3>
-      <p>${inline(c.questions[key].text)}${link}</p>
+      <p>${inline(c.questions[key].text)}</p>
     </div>`;
-  const commands = ` <a href="${relative(path, `${PATHS.download[c.lang]}#cli`)}">${escape(c.questions.commands)}</a>`;
   return `<section class="abschnitt fragen" aria-labelledby="fragen-titel">
   <h2 id="fragen-titel">${escape(c.questions.title)}</h2>
   <div class="antworten">
     ${answer('stop')}
     ${answer('clean')}
     ${answer('providers')}
-    ${answer('server', commands)}
+    ${answer('gmail')}
   </div>
-</section>`;
-}
-
-function providers(c: Content): string {
-  const rows = c.providers.rows.map(([name, how]) => `<tr><th scope="row">${escape(name)}</th><td>${escape(how)}</td></tr>`).join('');
-  return `<section class="abschnitt anbieter" aria-labelledby="anbieter-titel">
-  <h2 id="anbieter-titel">${escape(c.providers.title)}</h2>
-  <div class="anbieter-kopf">
-    <p>${inline(c.providers.lead)}</p>
-    <p class="klein leise">${inline(c.providers.note)}</p>
-  </div>
-  <table class="tabelle anbieter-tabelle">
-    <thead><tr><th scope="col">${escape(c.providers.head[0])}</th><th scope="col">${escape(c.providers.head[1])}</th></tr></thead>
-    <tbody>${rows}</tbody>
-  </table>
 </section>`;
 }
 
@@ -317,7 +306,7 @@ function downloads(c: Content, path: string, release: Release | null): string {
     return `<div class="system" data-platform="${platform}">
     <div class="system-kopf">
       <h3>${escape(system.name)}<span class="deins" hidden>${escape(c.download.yours)}</span></h3>
-      <p class="klein leise">${escape(system.hint)}</p>
+      <p>${escape(system.hint)}</p>
     </div>
     <ul class="varianten">
       ${variants}
@@ -393,17 +382,18 @@ export function homePage(lang: Lang, context: RenderContext): string {
     hero(c, path, context),
     backup(c),
     migrate(c, path, context),
-    questions(c, path),
+    commandLine(c),
+    questions(c),
     downloadData(c, path, context.release),
   ].join('\n');
   return frame(c, 'home', path, c.meta.title, c.meta.description, main, context);
 }
 
-/** Every installer with its checksum, checking a file, the command line and what each provider needs. */
+/** Every installer with its checksum, and checking a downloaded file. */
 export function downloadPage(lang: Lang, context: RenderContext): string {
   const c = CONTENT[lang];
   const path = PATHS.download[lang];
-  const main = [downloads(c, path, context.release), commandLine(c), providers(c), downloadData(c, path, context.release)].join('\n');
+  const main = [downloads(c, path, context.release), downloadData(c, path, context.release)].join('\n');
   return frame(c, 'download', path, c.download.meta.title, c.download.meta.description, main, context);
 }
 

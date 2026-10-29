@@ -109,7 +109,6 @@ describe('pages', () => {
     assert.equal(page.match(/class="variante fehlt"/g)?.length, SLOTS.length - real.downloads.length);
     assert.match(page, /Noch nicht verfügbar/);
     assert.doesNotMatch(page, /zip"/);
-    assert.match(page, /id="cli"/);
   });
 
   it('show every button before the first version, as places only, and nothing to check', () => {
@@ -127,10 +126,20 @@ describe('pages', () => {
     assert.ok(home.includes('<a class="knopf knopf-hell laden" href="download/">Herunterladen</a>'), 'closing scene');
     assert.match(home, /<div class="holen" id="download">/);
     assert.match(home, /id="daten"/);
-    assert.ok(home.includes('<a href="download/#cli">Befehle ansehen</a>'));
+    assert.match(home, /<section class="feld-dunkel" id="cli"/);
     assert.doesNotMatch(home, /data-summe=/);
-    assert.ok(withRelease.get('/de/impressum/')?.includes('<a class="knopf knopf-klein" href="../download/">Herunterladen</a>'));
-    assert.doesNotMatch(withRelease.get('/de/download/') ?? '', /knopf-klein/);
+  });
+
+  it('carry the navigation on every page, and mark the download page as the one shown', () => {
+    for (const [path, html] of withRelease) {
+      const lang = path.startsWith('/de/') ? 'de' : 'en';
+      const home = PATHS.home[lang];
+      for (const to of [`${home}#backup`, `${home}#cli`, PATHS.download[lang]]) {
+        assert.ok(html.includes(`href="${relative(path, to)}"`), `${path}: no link to ${to}`);
+      }
+      assert.equal(/aria-current="page"/.test(html), path === PATHS.download[lang], path);
+    }
+    assert.ok(withRelease.get('/de/download/')?.includes('<a class="knopf knopf-klein" href="./" aria-current="page">Herunterladen</a>'));
   });
 
   it('show the flag of the other language beside its name', () => {
