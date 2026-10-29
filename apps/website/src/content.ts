@@ -25,15 +25,22 @@ export interface Content {
     image: string;
   };
   backup: { title: string; text: string; facts: string[]; tree: string; caption: string };
-  migrate: { title: string; text: string; kept: string; syncTitle: string; sync: string; image: string };
-  care: {
+  migrate: { title: string; text: string; kept: string; sync: string; image: string };
+  /** Short answers to what people ask before they trust a tool with their mail. */
+  questions: {
     title: string;
-    stop: { title: string; text: string; image: string };
-    clean: { title: string; text: string; image: string };
+    stop: { title: string; text: string };
+    clean: { title: string; text: string };
+    providers: { title: string; text: string };
+    server: { title: string; text: string };
+    /** The link after the answer about servers, to the commands on the download page. */
+    commands: string;
   };
   providers: { title: string; lead: string; head: [string, string]; rows: [string, string][]; note: string };
   cli: { title: string; text: string; code: string; exit: string };
   download: {
+    /** The download page's title and description for search engines and links. */
+    meta: { title: string; description: string };
     title: string;
     released: string;
     /** Per system: its name, and a sentence that helps choose among its installers. */
@@ -63,6 +70,8 @@ export interface Content {
   footer: {
     title: string;
     text: string;
+    /** Under the download button of the closing scene; {version} is filled in. */
+    download: string;
     /** The invitation to support, with its heading and button, in the closing scene. */
     supportTitle: string;
     support: string;
@@ -89,7 +98,7 @@ export const en: Content = {
   hero: {
     title: ['Back up and', 'move your mail'],
     lead:
-      'IMAP Transfer copies a mail account into a folder on your computer, back into an account, or straight into another provider. Free and open source, for macOS, Windows and Linux.',
+      'Switch providers without losing a single message, or back up your mailbox before you cancel it. Free, for macOS, Windows and Linux.',
     button: 'Download',
     buttonFor: { mac: 'Download for macOS', windows: 'Download for Windows', linux: 'Download for Linux' },
     version: 'Version {version}.',
@@ -100,12 +109,11 @@ export const en: Content = {
   },
   backup: {
     title: 'One file per message',
-    text: 'A backup is an ordinary folder: one `.eml` file per message, sorted into the folders of your account. Every mail program opens these files with a double click, so your mail stays readable without IMAP Transfer.',
+    text: 'A backup is an ordinary folder: one `.eml` file per message, sorted like your account. Every mail program opens these files, with or without IMAP Transfer.',
     facts: [
-      'The first run fetches everything. Every later run only fetches what is new.',
+      'After the first run, only new mail is fetched.',
       'Mail you delete in the account stays in the backup.',
-      'A Gmail message with five labels is stored once and goes back into all five.',
-      'A check compares every file with its checksum. An mbox export takes the backup to Thunderbird or Apple Mail.',
+      'An mbox export takes everything to Thunderbird or Apple Mail.',
     ],
     tree: [
       'anna@example.com/',
@@ -125,25 +133,31 @@ export const en: Content = {
   },
   migrate: {
     title: 'From provider to provider',
-    text: 'Choose the target account, and IMAP Transfer shows every folder and where it goes: Sent becomes Sent Items, a missing folder is created. Mail that is already there is skipped, so a second run only brings what is new.',
+    text: 'Choose the target account, and IMAP Transfer shows every folder and where it goes: Sent becomes Sent Items, a missing folder is created. Mail that is already there is skipped.',
     kept: 'The old account stays as it is. The migration only reads from it.',
-    syncTitle: 'Or keep both in step',
-    sync: 'With **Sync**, what you delete or move in the old account happens in the new one too, and read and flagged follow. It works in one direction only. Whatever leaves a folder goes to the trash, and mail that only the new account holds stays.',
+    sync: 'Until you have switched over, **Sync** keeps the new account in step with the old one: what you delete or move there happens here too.',
     image:
       'The plan of a migration from kontakt@example.org on imap.example.net to the same address on mail.example.org: a notice that nothing changes in the source, the Sync option, and five folders with their targets and message counts.',
   },
-  care: {
-    title: 'Nothing lost, nothing twice',
+  questions: {
+    title: 'Before you ask',
     stop: {
       title: 'Stop whenever you like',
-      text: 'Close the laptop, lose the connection, press Stop: the next run continues where the last one ended, without a single duplicate. IMAP Transfer recognises each message by its Message-ID, date, sender and subject, on every server. Large messages show their own progress, and the app estimates the time left.',
-      image: 'A backup in progress: 1,240 of 3,518 messages, about ten minutes left, a large PDF on its way.',
+      text: 'Close the laptop or lose the connection: the next run continues where the last one ended, without a single duplicate.',
     },
     clean: {
-      title: 'Copies cleaned up',
-      text: 'An interrupted sync with another tool can leave the same message in a folder several times. A test run lists every exact copy and changes nothing. Only then do you decide to move the copies to the trash; one of each stays, with all its flags.',
-      image: 'The test run of a cleanup: three copies in the inbox, nothing changed in the mailbox yet.',
+      title: 'Duplicates cleaned up',
+      text: 'A test run lists every exact copy and changes nothing. Only then do you decide; one of each message stays.',
     },
+    providers: {
+      title: 'Any IMAP provider',
+      text: 'Gmail, Outlook, iCloud, GMX, WEB.DE, T-Online, IONOS, Posteo and every other. The app knows their settings and tells you what to prepare.',
+    },
+    server: {
+      title: 'On servers too',
+      text: 'The same engine runs on the command line and as a Docker image, for example for a nightly backup on a NAS.',
+    },
+    commands: 'See the commands',
   },
   providers: {
     title: 'Works with your provider',
@@ -180,6 +194,10 @@ export const en: Content = {
     exit: 'Exit codes tell a script what happened: `0` done, `2` done but some messages failed, `1` failed, `130` stopped.',
   },
   download: {
+    meta: {
+      title: 'Download: IMAP Transfer',
+      description: 'IMAP Transfer for macOS, Windows and Linux, every file with its checksum, plus the command line and Docker.',
+    },
     title: 'Download',
     released: 'Version {version}, released on {date}. Checksums: SHA-256.',
     systems: {
@@ -219,6 +237,7 @@ export const en: Content = {
   footer: {
     title: 'Your mail stays with you.',
     text: 'No telemetry, no account, no cloud. The app only talks to your mail servers, and to GitHub to look for updates.',
+    download: 'Version {version} for macOS, Windows and Linux.',
     supportTitle: 'Free, and it stays that way',
     support: 'Did IMAP Transfer save you some work? A coffee supports its development.',
     supportButton: 'Buy me a coffee',
@@ -244,7 +263,7 @@ export const de: Content = {
   hero: {
     title: ['Mails sichern', 'und umziehen'],
     lead:
-      'IMAP Transfer kopiert ein Mailkonto in einen Ordner auf Ihrem Computer, zurück in ein Konto oder direkt zu einem anderen Anbieter. Kostenlos und quelloffen, für macOS, Windows und Linux.',
+      'Wechseln Sie den Anbieter, ohne eine Mail zu verlieren, oder sichern Sie Ihr Postfach vor der Kündigung. Kostenlos, für macOS, Windows und Linux.',
     button: 'Herunterladen',
     buttonFor: { mac: 'Für macOS herunterladen', windows: 'Für Windows herunterladen', linux: 'Für Linux herunterladen' },
     version: 'Version {version}.',
@@ -255,12 +274,11 @@ export const de: Content = {
   },
   backup: {
     title: 'Eine Datei pro Mail',
-    text: 'Eine Sicherung ist ein gewöhnlicher Ordner: eine `.eml`-Datei pro Mail, einsortiert in die Ordner Ihres Kontos. Jedes Mailprogramm öffnet diese Dateien per Doppelklick. Ihre Mails bleiben also lesbar, auch ohne IMAP Transfer.',
+    text: 'Die Sicherung ist ein gewöhnlicher Ordner: eine `.eml`-Datei pro Mail, sortiert wie in Ihrem Konto. Jedes Mailprogramm öffnet sie, auch ohne IMAP Transfer.',
     facts: [
       'Beim ersten Mal kommt alles, danach nur noch das Neue.',
       'Was Sie im Konto löschen, bleibt in der Sicherung.',
-      'Eine Gmail-Mail mit fünf Labels liegt einmal in der Sicherung und kommt in alle fünf zurück.',
-      'Eine Prüfung vergleicht jede Datei mit ihrer Prüfsumme. Der mbox-Export bringt die Sicherung zu Thunderbird oder Apple Mail.',
+      'Der mbox-Export bringt alles zu Thunderbird oder Apple Mail.',
     ],
     tree: [
       'anna@example.com/',
@@ -280,25 +298,31 @@ export const de: Content = {
   },
   migrate: {
     title: 'Von Anbieter zu Anbieter',
-    text: 'Sie wählen das Zielkonto, und IMAP Transfer zeigt jeden Ordner und wohin er kommt: Aus „Gesendet“ wird „Gesendete Elemente“, ein fehlender Ordner wird angelegt. Was schon im Ziel liegt, wird übersprungen. Ein zweiter Lauf bringt also nur das Neue.',
+    text: 'Sie wählen das Zielkonto, und IMAP Transfer zeigt jeden Ordner und wohin er kommt: Aus „Gesendet“ wird „Gesendete Elemente“, ein fehlender Ordner wird angelegt. Was schon im Ziel liegt, wird übersprungen.',
     kept: 'Das alte Konto bleibt, wie es ist. Der Umzug liest dort nur.',
-    syncTitle: 'Oder beide im Gleichschritt',
-    sync: 'Mit **Abgleichen** geschieht, was Sie im alten Konto löschen oder verschieben, auch im neuen, und gelesen und markiert folgen. Das geht nur in eine Richtung. Was dabei wegfällt, kommt in den Papierkorb, und Mails, die nur im neuen Konto liegen, bleiben.',
+    sync: 'Bis Sie umgestellt haben, hält **Abgleichen** das neue Konto auf dem Stand des alten: Was Sie dort löschen oder verschieben, geschieht auch hier.',
     image:
       'Der Plan eines Umzugs von kontakt@example.org auf imap.example.net zur selben Adresse auf mail.example.org: der Hinweis, dass in der Quelle nichts verändert wird, die Wahl „Abgleichen“ und fünf Ordner mit Ziel und Anzahl der Mails.',
   },
-  care: {
-    title: 'Nichts verloren, nichts doppelt',
+  questions: {
+    title: 'Bevor Sie fragen',
     stop: {
       title: 'Abbrechen, wann Sie wollen',
-      text: 'Laptop zu, Verbindung weg oder „Abbrechen“ gedrückt: Der nächste Lauf macht dort weiter, wo der letzte aufgehört hat, ohne eine einzige doppelte Mail. IMAP Transfer erkennt jede Mail an Message-ID, Datum, Absender und Betreff, auf jedem Server. Große Mails zeigen ihren eigenen Fortschritt, und die App schätzt die Restzeit.',
-      image: 'Eine laufende Sicherung: 1.240 von 3.518 Mails, noch etwa zehn Minuten, ein großes PDF wird geladen.',
+      text: 'Laptop zu oder Verbindung weg: Der nächste Lauf macht dort weiter, wo der letzte aufgehört hat, ohne eine doppelte Mail.',
     },
     clean: {
-      title: 'Kopien aufgeräumt',
-      text: 'Ein abgebrochener Abgleich mit einem anderen Programm kann dieselbe Mail mehrfach in einem Ordner hinterlassen. Ein Testlauf zeigt jede exakte Kopie und ändert nichts. Erst danach entscheiden Sie, ob die Kopien in den Papierkorb kommen; von jeder Mail bleibt eine, mit allen Markierungen.',
-      image: 'Der Testlauf beim Aufräumen: drei Kopien im Posteingang, im Postfach wurde noch nichts verändert.',
+      title: 'Doppelte Mails aufgeräumt',
+      text: 'Ein Testlauf zeigt jede exakte Kopie und ändert nichts. Erst dann entscheiden Sie; von jeder Mail bleibt eine.',
     },
+    providers: {
+      title: 'Jeder IMAP-Anbieter',
+      text: 'Gmail, Outlook, iCloud, GMX, WEB.DE, T-Online, IONOS, Posteo und alle anderen. Die App kennt die Einstellungen und sagt, was Sie vorbereiten müssen.',
+    },
+    server: {
+      title: 'Auch auf dem Server',
+      text: 'Dieselbe Technik läuft auf der Kommandozeile und als Docker-Image, etwa für die nächtliche Sicherung auf dem NAS.',
+    },
+    commands: 'Befehle ansehen',
   },
   providers: {
     title: 'Klappt mit Ihrem Anbieter',
@@ -335,6 +359,10 @@ export const de: Content = {
     exit: 'Der Rückgabewert sagt einem Skript, was passiert ist: `0` fertig, `2` fertig, aber einige Mails fehlgeschlagen, `1` fehlgeschlagen, `130` abgebrochen.',
   },
   download: {
+    meta: {
+      title: 'Herunterladen: IMAP Transfer',
+      description: 'IMAP Transfer für macOS, Windows und Linux, jede Datei mit Prüfsumme, dazu die Kommandozeile und Docker.',
+    },
     title: 'Herunterladen',
     released: 'Version {version}, erschienen am {date}. Prüfsummen: SHA-256.',
     systems: {
@@ -374,6 +402,7 @@ export const de: Content = {
   footer: {
     title: 'Ihre Mails bleiben bei Ihnen.',
     text: 'Keine Nutzungsstatistik, kein Konto, keine Cloud. Die App spricht nur mit Ihren Mailservern, und mit GitHub, um nach Updates zu sehen.',
+    download: 'Version {version} für macOS, Windows und Linux.',
     supportTitle: 'Kostenlos, und das bleibt so',
     support: 'Hat IMAP Transfer Ihnen Arbeit erspart? Mit einem Kaffee unterstützen Sie die Entwicklung.',
     supportButton: 'Einen Kaffee spendieren',

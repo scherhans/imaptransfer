@@ -40,7 +40,7 @@ const NEW = { user: 'kontakt@example.org', host: 'mail.example.org' };
 const OTHER = { user: 'anna@example.com', host: 'mail.example.com' };
 
 const words = de
-  ? { archive: 'Archiv', invoices: 'Rechnungen', sent: 'Gesendet', sentTarget: 'Gesendete Elemente', quote: 'Angebot für die Küche', shipped: 'Ihre Bestellung ist unterwegs', plan: 'Grundriss Erdgeschoss.pdf', cont: 'Weiter', test: 'Testlauf starten', cancel: 'Abbrechen', trash: 'Papierkorb' }
+  ? { archive: 'Archiv', invoices: 'Rechnungen', sent: 'Gesendet', sentTarget: 'Gesendete Elemente', cont: 'Weiter', cancel: 'Abbrechen' }
   : { archive: 'Archive', invoices: 'Invoices', sent: 'Sent', sentTarget: 'Sent Items', quote: 'Quote for the kitchen', shipped: 'Your order has shipped', plan: 'Floor plan ground floor.pdf', cont: 'Continue', test: 'Start test run', cancel: 'Cancel', trash: 'Trash' };
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -89,9 +89,9 @@ const inbox = {
     { subject: words.shipped, from: 'Shop <service@example.net>', date: '2024-06-02T16:40:00.000Z', size: 21_904, copies: 2 },
   ],
 };
-// The documentation shows a second, clean folder; the website's cut-out stays short.
+// The test run shows a second, clean folder.
 const duplicates = {
-  folders: docs ? [inbox, { path: words.archive, messages: 1873, duplicates: 0, similar: 0, duplicated: [] }] : [inbox],
+  folders: [inbox, { path: words.archive, messages: 1873, duplicates: 0, similar: 0, duplicated: [] }],
   duplicates: 3, similar: 0, trash: words.trash, gmail: false, problem: null,
 };
 
@@ -131,14 +131,22 @@ async function main() {
   await click(words.cancel);
   await sleep(300);
 
+  // The website shows the app and the migration plan; the documentation goes on to the test run,
+  // a running backup and its report.
+  if (docs) await documentationRest(source);
+  console.log(`Screenshots in ${out}`);
+  app.exit(0);
+}
+
+async function documentationRest(source) {
   await click(words.test);
   await waitFor(`!!document.querySelector('dialog tbody tr')`);
-  await shot(docs ? 'dedupe-test-run' : 'cleanup', docs ? null : 'dialog[open]');
+  await shot('dedupe-test-run');
   await click(words.cancel);
   await sleep(300);
 
   const startedAt = new Date(Date.now() - 190_000).toISOString();
-  const directory = docs ? `/Users/anna/Documents/IMAP Transfer/${OLD.user} (${OLD.host})` : '/backup';
+  const directory = `/Users/anna/Documents/IMAP Transfer/${OLD.user} (${OLD.host})`;
   const base = { id: 'screenshots', request: { kind: 'backup', accountId: source, directory, excludeFolders: [] }, warnings: [], retry: null, verify: null, mbox: null, error: null, startedAt };
   window.webContents.send('jobs:update', {
     ...base, status: 'running', phase: 'transfer', folder: { path: words.archive, index: 1, count: 5 },
@@ -148,20 +156,16 @@ async function main() {
     report: null,
   });
   await waitFor(`!!document.querySelector('.panel .progress')`);
-  await shot(docs ? 'backup-running' : 'running', docs ? null : '.panel > .card');
+  await shot('backup-running');
 
-  if (docs) {
-    const folders = [folder('INBOX', 412), folder(words.archive, 1873), folder(`${words.archive}/2023`, 655), folder(words.invoices, 238), folder(words.sent, 340)];
-    window.webContents.send('jobs:update', {
-      ...base, status: 'completed', phase: 'finish', folder: null, progress: { done: 3518, total: 3518, bytes: 1_600_000_000 }, remaining: null, current: null,
-      report: { kind: 'backup', status: 'completed', error: null, startedAt, finishedAt: new Date().toISOString(), folders,
-        totals: { messages: 3518, transferred: 3518, skipped: 0, failed: 0, removed: 0, bytes: 1_600_000_000, deduplicated: 0 }, failures: [] },
-    });
-    await waitFor(`!!document.querySelector('.headline')`);
-    await shot('backup-report');
-  }
-  console.log(`Screenshots in ${out}`);
-  app.exit(0);
+  const folders = [folder('INBOX', 412), folder(words.archive, 1873), folder(`${words.archive}/2023`, 655), folder(words.invoices, 238), folder(words.sent, 340)];
+  window.webContents.send('jobs:update', {
+    ...base, status: 'completed', phase: 'finish', folder: null, progress: { done: 3518, total: 3518, bytes: 1_600_000_000 }, remaining: null, current: null,
+    report: { kind: 'backup', status: 'completed', error: null, startedAt, finishedAt: new Date().toISOString(), folders,
+      totals: { messages: 3518, transferred: 3518, skipped: 0, failed: 0, removed: 0, bytes: 1_600_000_000, deduplicated: 0 }, failures: [] },
+  });
+  await waitFor(`!!document.querySelector('.headline')`);
+  await shot('backup-report');
 }
 
 main().catch((error) => {

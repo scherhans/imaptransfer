@@ -158,7 +158,8 @@ ul {
   margin: 0;
 }
 
-h2 {
+h2,
+.herunterladen-kopf h1 {
   font-family: var(--schrift-anzeige);
   font-size: var(--titel);
   font-weight: 500;
@@ -361,6 +362,11 @@ strong {
   margin-top: var(--abschnitt);
 }
 
+/* A page that starts with a section, the download page: it sits under the header like a title. */
+main > .abschnitt:first-child {
+  margin-top: clamp(32px, 5vw, 72px);
+}
+
 /* The stage: the statement, then the app itself. */
 .buehne {
   padding-top: clamp(24px, 4vw, 64px);
@@ -477,28 +483,20 @@ strong {
   margin-top: 0.15em;
 }
 
-.umzug-text h3 {
-  margin-top: 36px;
+.bleibt + p {
+  margin-top: 24px;
 }
 
-.umzug-text h3 + p {
-  margin-top: 12px;
-}
-
-/* Careful with every message: two things side by side, each with its screen. */
-.sorgfalt-paar {
+/* The short answers: two by two, each a heading and two sentences. */
+.antworten {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 48px clamp(40px, 5vw, 80px);
-  margin-top: clamp(36px, 4vw, 56px);
+  gap: 40px clamp(40px, 5vw, 80px);
+  margin-top: clamp(32px, 4vw, 48px);
 }
 
-.sorgfalt-teil p {
-  margin-top: 14px;
-}
-
-.sorgfalt-teil .ausschnitt {
-  margin-top: 28px;
+.antwort p {
+  margin-top: 10px;
 }
 
 /* Tables: the one place with lines. */
@@ -526,11 +524,6 @@ strong {
 
 .tabelle tbody th {
   font-weight: 600;
-}
-
-.tabelle .zahl {
-  text-align: right;
-  white-space: nowrap;
 }
 
 /* The heading over the whole width, then the explanation beside the table. */
@@ -977,14 +970,46 @@ strong {
   stroke-linejoin: round;
 }
 
-/* The support button: white on the field, the brightest thing in it. */
-.fuss .knopf-zweit {
-  border-color: var(--papier);
+/* The closing scene's download: the button for the visitor's system, then the way to every other. */
+.holen {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
+  margin-top: 36px;
 }
 
-.fuss .knopf-zweit:hover {
+.holen p {
+  max-width: 44ch;
+}
+
+.fuss a:not(.knopf),
+.fuss a:not(.knopf):hover {
+  color: var(--akzent-tinte);
+}
+
+/* On the field the download is the one white button; the support panel's button is an outline. */
+.knopf-hell,
+.knopf-hell:hover {
+  border-color: var(--papier);
+  background: var(--papier);
+  color: var(--akzent-dunkel);
+}
+
+.knopf-hell:hover {
   border-color: var(--akzent-sanft);
   background: var(--akzent-sanft);
+}
+
+.knopf-rand,
+.knopf-rand:hover {
+  border-color: var(--akzent-tinte);
+  background: transparent;
+  color: var(--akzent-tinte);
+}
+
+.knopf-rand:hover {
+  background: var(--akzent);
 }
 
 .fuss-links {
@@ -1005,12 +1030,10 @@ strong {
   align-items: center;
   gap: 8px;
   min-height: 44px;
-  color: var(--akzent-tinte);
   font-weight: 600;
 }
 
-.fuss-links a:hover {
-  color: var(--akzent-tinte);
+.fuss a:not(.knopf):hover {
   text-decoration-thickness: 2px;
 }
 
@@ -1108,10 +1131,11 @@ strong {
   }
 }
 
-/* The two careful things stay side by side on a tablet. */
+/* The answers stay two by two on a tablet. */
 @media (max-width: 720px) {
-  .sorgfalt-paar {
+  .antworten {
     grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
   }
 }
 

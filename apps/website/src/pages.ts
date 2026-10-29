@@ -96,7 +96,7 @@ function head(c: Content, kind: PageKind | 'notFound', path: string, title: stri
   <link rel="preload" href="${relative(path, '/assets/fonts/newsreader-500.woff2')}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="${relative(path, '/assets/fonts/hanken-grotesk-400.woff2')}" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="${relative(path, '/assets/site.css')}">
-  ${kind === 'home' ? `<script src="${relative(path, '/assets/site.js')}" defer></script>` : ''}
+  ${kind === 'home' || kind === 'download' ? `<script src="${relative(path, '/assets/site.js')}" defer></script>` : ''}
 </head>`;
 }
 
@@ -112,12 +112,12 @@ function header(c: Content, kind: PageKind | 'notFound', path: string): string {
   <a class="marke" href="${relative(path, PATHS.home[c.lang])}"><img src="${relative(path, '/assets/icon.svg')}" alt="" width="36" height="36"><span>IMAP Transfer</span></a>
   <div class="kopf-rechts">
     ${languageLink(c, kind, path, 'sprache')}
-    <a class="knopf knopf-klein" href="${relative(path, `${PATHS.home[c.lang]}#download`)}">${c.nav.download}</a>
+    ${kind === 'download' ? '' : `<a class="knopf knopf-klein" href="${relative(path, PATHS.download[c.lang])}">${c.nav.download}</a>`}
   </div>
 </header>`;
 }
 
-function footer(c: Content, kind: PageKind | 'notFound', path: string): string {
+function footer(c: Content, kind: PageKind | 'notFound', path: string, context: RenderContext): string {
   const links = [
     `<a href="${githubUrl()}" rel="noopener">${c.footer.source}</a>`,
     `<a href="${githubUrl('/blob/main/LICENSE')}" rel="noopener">${c.footer.license}</a>`,
@@ -131,13 +131,17 @@ function footer(c: Content, kind: PageKind | 'notFound', path: string): string {
     kind === 'home'
       ? `<h2 class="schluss">${escape(c.footer.title)}</h2>
   <p class="vorspann schluss-text">${escape(c.footer.text)}</p>
+  <div class="holen" id="download">
+    ${downloadButton(c, path, 'knopf-hell')}
+    <p>${downloadNote(c, path, context.release, c.footer.download)}</p>
+  </div>
   <div class="unterstuetzen">
     ${CUP}
     <div class="unterstuetzen-text">
       <h3>${escape(c.footer.supportTitle)}</h3>
       <p>${escape(c.footer.support)}</p>
     </div>
-    <a class="knopf knopf-zweit" href="${SITE.support}" rel="noopener">${escape(c.footer.supportButton)}</a>
+    <a class="knopf knopf-rand" href="${SITE.support}" rel="noopener">${escape(c.footer.supportButton)}</a>
   </div>`
       : '';
   return `<footer class="fuss${closing ? ' fuss-schluss' : ''}">
@@ -160,7 +164,7 @@ ${header(c, kind, path)}
 <main id="inhalt">
 ${main}
 </main>
-${footer(c, kind, path)}
+${footer(c, kind, path, context)}
 </body>
 </html>
 `;
@@ -168,17 +172,28 @@ ${footer(c, kind, path)}
 
 // ── The landing page ──────────────────────────────────────────────────────────────────────────
 
+/**
+ * The button that downloads the installer for the visitor's system. The page's script finds the
+ * system and sets the file; without the script, or on a phone, it leads to the download page.
+ */
+function downloadButton(c: Content, path: string, variant = ''): string {
+  return `<a class="knopf${variant ? ` ${variant}` : ''} laden" href="${relative(path, PATHS.download[c.lang])}">${escape(c.hero.button)}</a>`;
+}
+
+/** The line under a download button: the version and the way to every system, or that it is on its way. */
+function downloadNote(c: Content, path: string, release: Release | null, template: string): string {
+  if (!release) return escape(c.hero.soon);
+  return `${escape(fill(template, { version: release.version }))} <a href="${relative(path, PATHS.download[c.lang])}">${escape(c.hero.all)}</a>`;
+}
+
 function hero(c: Content, path: string, context: RenderContext): string {
-  const release = context.release;
-  const note = release
-    ? `${escape(fill(c.hero.version, { version: release.version }))} <a href="#download">${escape(c.hero.all)}</a>`
-    : escape(c.hero.soon);
+  const note = downloadNote(c, path, context.release, c.hero.version);
   return `<section class="buehne" aria-labelledby="titel">
   <h1 id="titel" class="anzeige">${escape(c.hero.title[0])}<br>${escape(c.hero.title[1])}</h1>
   <div class="buehne-zeile">
     <p class="vorspann">${inline(c.hero.lead)}</p>
     <div class="buehne-aktion">
-      <a class="knopf" id="laden" href="#download">${escape(c.hero.button)}</a>
+      ${downloadButton(c, path)}
       <p class="klein leise">${note}</p>
     </div>
   </div>
@@ -211,26 +226,25 @@ function migrate(c: Content, path: string, context: RenderContext): string {
     <h2 id="umzug-titel">${escape(c.migrate.title)}</h2>
     <p>${inline(c.migrate.text)}</p>
     <p class="bleibt">${icon(SHIELD)}<span>${escape(c.migrate.kept)}</span></p>
-    <h3>${escape(c.migrate.syncTitle)}</h3>
     <p>${inline(c.migrate.sync)}</p>
   </div>
 </section>`;
 }
 
-function care(c: Content, path: string, context: RenderContext): string {
-  const part = (key: 'stop' | 'clean', image: string) => {
-    const text = c.care[key];
-    return `<div class="sorgfalt-teil">
-      <h3>${escape(text.title)}</h3>
-      <p>${inline(text.text)}</p>
-      <figure class="ausschnitt">${screenshot(context, c.lang, path, image, text.image)}</figure>
+/** What people ask before they trust a tool with their mail, each answered in two sentences. */
+function questions(c: Content, path: string): string {
+  const answer = (key: 'stop' | 'clean' | 'providers' | 'server', link = '') => `<div class="antwort">
+      <h3>${escape(c.questions[key].title)}</h3>
+      <p>${inline(c.questions[key].text)}${link}</p>
     </div>`;
-  };
-  return `<section class="abschnitt sorgfalt" aria-labelledby="sorgfalt-titel">
-  <h2 id="sorgfalt-titel">${escape(c.care.title)}</h2>
-  <div class="sorgfalt-paar">
-    ${part('stop', 'running')}
-    ${part('clean', 'cleanup')}
+  const commands = ` <a href="${relative(path, `${PATHS.download[c.lang]}#cli`)}">${escape(c.questions.commands)}</a>`;
+  return `<section class="abschnitt fragen" aria-labelledby="fragen-titel">
+  <h2 id="fragen-titel">${escape(c.questions.title)}</h2>
+  <div class="antworten">
+    ${answer('stop')}
+    ${answer('clean')}
+    ${answer('providers')}
+    ${answer('server', commands)}
   </div>
 </section>`;
 }
@@ -255,7 +269,7 @@ function commandLine(c: Content): string {
     .split('\n')
     .map((line) => (line.startsWith('#') ? `<span class="kommentar">${escape(line)}</span>` : escape(line)))
     .join('\n');
-  return `<section class="feld-dunkel" aria-labelledby="cli-titel">
+  return `<section class="feld-dunkel" id="cli" aria-labelledby="cli-titel">
   <div class="abschnitt kommandozeile">
     <div class="kommandozeile-text">
       <h2 id="cli-titel">${escape(c.cli.title)}</h2>
@@ -313,9 +327,9 @@ function downloads(c: Content, path: string, release: Release | null): string {
   const intro = release
     ? escape(fill(c.download.released, { version: release.version, date: formatDate(release.publishedAt, c.locale) }))
     : escape(c.download.none);
-  return `<section class="abschnitt herunterladen" id="download" aria-labelledby="download-titel">
+  return `<section class="abschnitt herunterladen" aria-labelledby="download-titel">
   <div class="herunterladen-kopf">
-    <h2 id="download-titel">${escape(c.download.title)}</h2>
+    <h1 id="download-titel">${escape(c.download.title)}</h1>
     <div class="herunterladen-vorspann">
       <p>${intro}</p>
       <p class="klein leise">${escape(c.download.liability)} <a href="${relative(path, liabilityPath(c.lang))}">${escape(c.download.liabilityLink)}</a></p>
@@ -335,19 +349,6 @@ function checker(c: Content, path: string, release: Release): string {
     const download = first(platform);
     return download ? `<li><span class="klein leise">${escape(c.download.commands[platform])}</span><code>${escape(TERMINAL[platform](download.name))}</code></li>` : '';
   }).join('');
-  const data = {
-    version: release.version,
-    downloads: release.downloads.map(({ platform, arch, kind, name, url, sha256 }) => ({ platform, arch, kind, name, url: relative(path, url), sha256 })),
-    texts: {
-      buttonFor: c.hero.buttonFor,
-      copy: c.download.copy,
-      copied: c.download.copied,
-      checking: c.download.checking,
-      match: c.download.match,
-      mismatch: c.download.mismatch,
-      unreadable: c.download.unreadable,
-    },
-  };
   return `<div class="pruefen">
     <div class="pruefen-text">
       <h3>${escape(c.download.checkTitle)}</h3>
@@ -363,8 +364,26 @@ function checker(c: Content, path: string, release: Release): string {
       <p class="klein leise">${escape(c.download.terminal)}</p>
       <ul>${commands}</ul>
     </div>
-  </div>
-  <script type="application/json" id="daten">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
+  </div>`;
+}
+
+/** What the page's script needs: the files of the version, for the visitor's system and for checking one. */
+function downloadData(c: Content, path: string, release: Release | null): string {
+  if (!release || release.downloads.length === 0) return '';
+  const data = {
+    version: release.version,
+    downloads: release.downloads.map(({ platform, arch, kind, name, url, sha256 }) => ({ platform, arch, kind, name, url: relative(path, url), sha256 })),
+    texts: {
+      buttonFor: c.hero.buttonFor,
+      copy: c.download.copy,
+      copied: c.download.copied,
+      checking: c.download.checking,
+      match: c.download.match,
+      mismatch: c.download.mismatch,
+      unreadable: c.download.unreadable,
+    },
+  };
+  return `<script type="application/json" id="daten">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
 }
 
 export function homePage(lang: Lang, context: RenderContext): string {
@@ -374,12 +393,18 @@ export function homePage(lang: Lang, context: RenderContext): string {
     hero(c, path, context),
     backup(c),
     migrate(c, path, context),
-    care(c, path, context),
-    providers(c),
-    commandLine(c),
-    downloads(c, path, context.release),
+    questions(c, path),
+    downloadData(c, path, context.release),
   ].join('\n');
   return frame(c, 'home', path, c.meta.title, c.meta.description, main, context);
+}
+
+/** Every installer with its checksum, checking a file, the command line and what each provider needs. */
+export function downloadPage(lang: Lang, context: RenderContext): string {
+  const c = CONTENT[lang];
+  const path = PATHS.download[lang];
+  const main = [downloads(c, path, context.release), commandLine(c), providers(c), downloadData(c, path, context.release)].join('\n');
+  return frame(c, 'download', path, c.download.meta.title, c.download.meta.description, main, context);
 }
 
 /** Links of a text to a path of this site ("/assets/…"), made relative to the page. */

@@ -4,20 +4,21 @@ import { dirname, join, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, it } from 'node:test';
 import { formatSize, inline, relative } from '../src/html.ts';
-import { homePage, legalPage, notFoundPage, type ImageSizes, type RenderContext } from '../src/pages.ts';
+import { downloadPage, homePage, legalPage, notFoundPage, type ImageSizes, type RenderContext } from '../src/pages.ts';
 import { liabilityPath, PATHS } from '../src/paths.ts';
 import { exampleRelease, releaseOf, SLOTS } from '../src/release.ts';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const FONTS = ['newsreader-500.woff2', 'newsreader-600.woff2', 'newsreader-OFL.txt', 'hanken-grotesk-400.woff2', 'hanken-grotesk-600.woff2', 'hanken-grotesk-OFL.txt'];
 const images: ImageSizes = new Map(
-  ['en', 'de'].flatMap((lang) => ['app', 'app-narrow', 'migrate', 'running', 'cleanup'].map((name) => [`${lang}/${name}`, { width: 2000, height: 1000 }] as const)),
+  ['en', 'de'].flatMap((lang) => ['app', 'app-narrow', 'migrate'].map((name) => [`${lang}/${name}`, { width: 2000, height: 1000 }] as const)),
 );
 
 function pages(context: RenderContext): Map<string, string> {
   const result = new Map<string, string>();
   for (const lang of ['en', 'de'] as const) {
     result.set(PATHS.home[lang], homePage(lang, context));
+    result.set(PATHS.download[lang], downloadPage(lang, context));
     result.set(PATHS.imprint[lang], legalPage(lang, 'imprint', context));
     result.set(PATHS.privacy[lang], legalPage(lang, 'privacy', context));
   }
@@ -99,23 +100,37 @@ describe('pages', () => {
     }
   });
 
-  it('offer every built installer from this site with its checksum, and keep a place for the others', () => {
-    const home = withRelease.get('/de/') ?? '';
+  it('offer every built installer on the download page with its checksum, and keep a place for the others', () => {
+    const page = withRelease.get('/de/download/') ?? '';
     for (const download of real.downloads) {
-      assert.ok(home.includes(`href="../downloads/${download.name}" download="${download.name}"`), download.name);
-      assert.ok(home.includes(`data-summe="${download.sha256}"`), download.name);
+      assert.ok(page.includes(`href="../../downloads/${download.name}" download="${download.name}"`), download.name);
+      assert.ok(page.includes(`data-summe="${download.sha256}"`), download.name);
     }
-    assert.equal(home.match(/class="variante fehlt"/g)?.length, SLOTS.length - real.downloads.length);
-    assert.match(home, /Noch nicht verfügbar/);
-    assert.doesNotMatch(home, /zip"/);
+    assert.equal(page.match(/class="variante fehlt"/g)?.length, SLOTS.length - real.downloads.length);
+    assert.match(page, /Noch nicht verfügbar/);
+    assert.doesNotMatch(page, /zip"/);
+    assert.match(page, /id="cli"/);
   });
 
   it('show every button before the first version, as places only, and nothing to check', () => {
-    const home = withoutRelease.get('/') ?? '';
-    assert.equal(home.match(/class="variante fehlt"/g)?.length, SLOTS.length);
-    assert.match(home, /The first version is not out yet/);
-    assert.match(withoutRelease.get('/de/') ?? '', /Die erste Version ist noch nicht erschienen/);
-    assert.doesNotMatch(home, /id="daten"/);
+    const page = withoutRelease.get('/download/') ?? '';
+    assert.equal(page.match(/class="variante fehlt"/g)?.length, SLOTS.length);
+    assert.match(page, /The first version is not out yet/);
+    assert.match(withoutRelease.get('/de/download/') ?? '', /Die erste Version ist noch nicht erschienen/);
+    assert.doesNotMatch(page, /id="daten"/);
+    assert.doesNotMatch(withoutRelease.get('/') ?? '', /id="daten"/);
+  });
+
+  it('download from the start page for the visitor\'s system, falling back to the download page, and keep its old anchor', () => {
+    const home = withRelease.get('/de/') ?? '';
+    assert.ok(home.includes('<a class="knopf laden" href="download/">Herunterladen</a>'), 'stage');
+    assert.ok(home.includes('<a class="knopf knopf-hell laden" href="download/">Herunterladen</a>'), 'closing scene');
+    assert.match(home, /<div class="holen" id="download">/);
+    assert.match(home, /id="daten"/);
+    assert.ok(home.includes('<a href="download/#cli">Befehle ansehen</a>'));
+    assert.doesNotMatch(home, /data-summe=/);
+    assert.ok(withRelease.get('/de/impressum/')?.includes('<a class="knopf knopf-klein" href="../download/">Herunterladen</a>'));
+    assert.doesNotMatch(withRelease.get('/de/download/') ?? '', /knopf-klein/);
   });
 
   it('show the flag of the other language beside its name', () => {
@@ -127,14 +142,14 @@ describe('pages', () => {
     for (const [path, html] of withRelease) {
       assert.ok(html.includes('<a href="https://buymeacoffee.com/scherhans" rel="noopener">'), `${path}: no link to support`);
     }
-    assert.match(withRelease.get('/de/') ?? '', /<div class="unterstuetzen">[\s\S]*?class="knopf knopf-zweit" href="https:\/\/buymeacoffee\.com\/scherhans" rel="noopener">Einen Kaffee spendieren</);
-    assert.match(withRelease.get('/') ?? '', /class="knopf knopf-zweit" href="https:\/\/buymeacoffee\.com\/scherhans" rel="noopener">Buy me a coffee</);
+    assert.match(withRelease.get('/de/') ?? '', /<div class="unterstuetzen">[\s\S]*?class="knopf knopf-rand" href="https:\/\/buymeacoffee\.com\/scherhans" rel="noopener">Einen Kaffee spendieren</);
+    assert.match(withRelease.get('/') ?? '', /class="knopf knopf-rand" href="https:\/\/buymeacoffee\.com\/scherhans" rel="noopener">Buy me a coffee</);
   });
 
   it('point from the downloads to the liability section of the legal notice, before and after the first version', () => {
     for (const result of [withRelease, withoutRelease]) {
-      assert.ok(result.get('/de/')?.includes('<a href="impressum/#haftung">Mehr zur Haftung</a>'));
-      assert.ok(result.get('/')?.includes('<a href="legal-notice/#liability">About liability</a>'));
+      assert.ok(result.get('/de/download/')?.includes('<a href="../impressum/#haftung">Mehr zur Haftung</a>'));
+      assert.ok(result.get('/download/')?.includes('<a href="../legal-notice/#liability">About liability</a>'));
     }
     assert.match(withRelease.get('/de/impressum/') ?? '', /<h2 id="haftung">Haftung für die App<\/h2><p>[^<]*§ 521 BGB/);
     assert.match(withRelease.get('/legal-notice/') ?? '', /<h2 id="liability">Liability for the app<\/h2><p>[^<]*Section 521 BGB/);
