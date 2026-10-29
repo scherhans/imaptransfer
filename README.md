@@ -49,7 +49,7 @@ Desktop app: download it from [imaptransfer.com](https://imaptransfer.com/#downl
 | Windows | `.exe` installer (x64 and ARM) |
 | Linux | `.AppImage` and `.deb` (x64 and ARM) |
 
-The app is in English, German, French, Spanish, Italian, Dutch and Brazilian Portuguese. It follows the language of your system, or the one you pick at the bottom of the sidebar; light and dark look work the same way.
+The app is in English, German, French, Spanish, Italian, Dutch and Portuguese (as spoken in Portugal). It follows the language of your system, or the one you pick at the bottom of the sidebar; light and dark look work the same way.
 
 ## Signing in
 

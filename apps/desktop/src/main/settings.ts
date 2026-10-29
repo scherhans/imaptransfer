@@ -1,7 +1,7 @@
 import { closeSync, fsyncSync, mkdirSync, openSync, readFileSync, renameSync, writeSync } from 'node:fs';
 import { dirname } from 'node:path';
 import type { AccountOrder, Settings, ThemeChoice } from '../shared/api';
-import { isLanguageChoice } from '../shared/languages';
+import { isLanguageChoice, savedLanguage } from '../shared/languages';
 
 const THEMES: readonly unknown[] = ['system', 'light', 'dark'] satisfies ThemeChoice[];
 const ORDERS: readonly unknown[] = ['address', 'provider'] satisfies AccountOrder[];
@@ -25,7 +25,7 @@ export class SettingsStore {
       const content = JSON.parse(readFileSync(this.file, 'utf8')) as Record<string, unknown>;
       return {
         theme: isTheme(content.theme) ? content.theme : DEFAULTS.theme,
-        language: isLanguageChoice(content.language) ? content.language : DEFAULTS.language,
+        language: savedLanguage(content.language),
         accountOrder: isOrder(content.accountOrder) ? content.accountOrder : DEFAULTS.accountOrder,
       };
     } catch {

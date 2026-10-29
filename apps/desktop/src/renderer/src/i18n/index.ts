@@ -6,9 +6,9 @@ import es from './es';
 import fr from './fr';
 import it from './it';
 import nl from './nl';
-import ptBR from './pt-BR';
+import ptPT from './pt-PT';
 
-export const messages: Record<Language, typeof de> = { de, en, es, fr, it, nl, 'pt-BR': ptBR };
+export const messages: Record<Language, typeof de> = { de, en, es, fr, it, nl, 'pt-PT': ptPT };
 
 const initial = pickLanguage(navigator.language);
 document.documentElement.lang = initial;
