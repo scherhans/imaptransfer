@@ -90,3 +90,6 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          # No provenance attestation: in a public repository it would carry the whole push event,
+          # the pusher's email address included.
+          provenance: false

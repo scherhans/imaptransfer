@@ -6,6 +6,16 @@
 4. Check the draft, write the notes, publish it. The desktop app finds the update on its next start.
 5. Publishing starts the [website workflow](../.github/workflows/website.yml): it downloads the files of the release, builds imaptransfer.com with them and uploads it to mittwald. The download buttons and checksums then show the new version. See [apps/website/README.md](../apps/website/README.md#deploy).
 
+## Merging
+
+Every commit on `main` carries the author `sebastian@imaptransfer.com`; a ruleset on GitHub refuses any other. Commits made in this folder get it from Git (`~/.gitconfig-imaptransfer`, included for `~/repositories/imaptransfer.com/`). A squash merge on GitHub takes the account's primary address unless told otherwise, so merge with:
+
+```sh
+gh pr merge <number> --squash --author-email sebastian@imaptransfer.com --repo scherhans/imaptransfer
+```
+
+In the browser, pick the same address in the merge dialog.
+
 ## Secrets and variables
 
 Without them the workflow still runs; the builds are then unsigned and nothing goes to npm.
