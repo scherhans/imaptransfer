@@ -58,6 +58,9 @@ describe('pages', () => {
       '/assets/icon.svg',
       '/assets/flags/gb.svg',
       '/assets/flags/de.svg',
+      '/assets/favicon.svg',
+      '/favicon.ico',
+      '/apple-touch-icon.png',
       ...FONTS.map((font) => `/assets/fonts/${font}`),
       ...real.downloads.map((download) => download.url),
     ]);
@@ -72,6 +75,16 @@ describe('pages', () => {
         const isAsset = /^\/assets\/(?:img\/(?:en|de)\/[a-z-]+\.png|flags\/[a-z]+\.svg)$/.test(target) && existsSync(join(root, target));
         assert.ok(isPage || files.has(target) || isAsset, `${path} links to ${link}, which does not exist`);
       }
+    }
+  });
+
+  it('name the icons browsers and phones look for, and the files exist', () => {
+    const home = withRelease.get('/') ?? '';
+    assert.match(home, /<link rel="icon" href="favicon\.ico" sizes="32x32">/);
+    assert.match(home, /<link rel="icon" href="assets\/favicon\.svg" type="image\/svg\+xml">/);
+    assert.match(home, /<link rel="apple-touch-icon" href="apple-touch-icon\.png">/);
+    for (const file of ['public/favicon.ico', 'public/apple-touch-icon.png', 'assets/favicon.svg']) {
+      assert.ok(existsSync(join(root, file)), file);
     }
   });
 

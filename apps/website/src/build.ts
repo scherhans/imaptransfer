@@ -148,6 +148,8 @@ async function main(): Promise<void> {
 
   const assets = join(out, 'assets');
   copyDirectory(join(root, 'assets'), assets);
+  // What browsers and crawlers look for at the root: favicon.ico, apple-touch-icon.png.
+  copyDirectory(join(root, 'public'), out);
   mkdirSync(join(assets, 'fonts'), { recursive: true });
   for (const [from, to] of FONTS) copyFileSync(join(root, 'node_modules', from), join(assets, 'fonts', to));
 

@@ -30,6 +30,7 @@ Screenshots for the README and the website, with example accounts on example.* s
 pnpm --filter imaptransfer-desktop screenshots docs          # docs/screenshots/
 pnpm --filter imaptransfer-desktop screenshots website en    # apps/website/assets/img/en/
 pnpm --filter imaptransfer-desktop screenshots website de    # apps/website/assets/img/de/
+pnpm --filter imaptransfer-desktop website-icons             # apps/website/public/favicon.ico, apple-touch-icon.png
 ```
 
 When working inside VS Code's terminal, unset `ELECTRON_RUN_AS_NODE` first (`env -u ELECTRON_RUN_AS_NODE …`); VS Code sets it, and Electron then starts as plain Node.js.

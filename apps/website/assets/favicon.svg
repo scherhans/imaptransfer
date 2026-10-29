@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="100 100 824 824" width="824" height="824">
+  <!-- The app icon's tile without the macOS margin and shadow, so it fills a browser tab. -->
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#17897d" />
+      <stop offset="1" stop-color="#0b5a51" />
+    </linearGradient>
+  </defs>
+  <rect x="100" y="100" width="824" height="824" rx="186" fill="url(#background)" />
+  <rect x="262" y="330" width="500" height="352" rx="44" fill="#f7f6f3" />
+  <path d="M290 362 L512 522 L734 362" fill="none" stroke="#0f6e63" stroke-width="34" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="724" cy="666" r="138" fill="#f7f6f3" />
+  <circle cx="724" cy="666" r="112" fill="#0f6e63" />
+  <path d="M668 630 h104 m-30 -28 l30 28 l-30 28" fill="none" stroke="#f7f6f3" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M780 704 h-104 m30 -28 l-30 28 l30 28" fill="none" stroke="#f7f6f3" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" opacity="0.8" />
+</svg>
