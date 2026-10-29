@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "rewriteRelativeImportExtensions": false,
+    "noEmit": true,
+    "jsx": "preserve",
+    "types": ["node"]
+  },
+  "include": ["src/renderer/src", "src/shared"]
+}

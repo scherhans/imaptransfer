@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 30">
+  <!-- The German flag in 3:2, for the link to the German pages. -->
+  <path d="M0 0h45v10H0z" fill="#000"/>
+  <path d="M0 10h45v10H0z" fill="#d00"/>
+  <path d="M0 20h45v10H0z" fill="#ffce00"/>
+</svg>

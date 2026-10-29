@@ -1,0 +1,36 @@
+{
+  "name": "imaptransfer",
+  "version": "0.2.0",
+  "description": "Back up, restore and migrate IMAP mail accounts from the command line",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "imaptransfer": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22.18"
+  },
+  "keywords": [
+    "imap",
+    "backup",
+    "email",
+    "migration",
+    "restore"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test --disable-warning=ExperimentalWarning \"test/*.test.ts\""
+  },
+  "dependencies": {
+    "@imaptransfer/core": "workspace:*",
+    "commander": "^15.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "~5.9.3"
+  }
+}

@@ -1,0 +1,361 @@
+import type { Platform } from './release.ts';
+
+export type Lang = 'en' | 'de';
+
+/**
+ * Every text of the landing page in one language. Inline marks: `code`, **strong**, [text](url).
+ * Placeholders in braces ({version}) are filled in by the page.
+ */
+export interface Content {
+  lang: Lang;
+  /** For dates and numbers. */
+  locale: string;
+  meta: { title: string; description: string };
+  nav: { skip: string; language: string; download: string };
+  preview: string;
+  hero: {
+    /** The headline as it breaks: two lines on every width. */
+    title: [string, string];
+    lead: string;
+    button: string;
+    buttonFor: Record<Platform, string>;
+    version: string;
+    all: string;
+    soon: string;
+    image: string;
+  };
+  backup: { title: string; text: string; facts: string[]; tree: string; caption: string };
+  migrate: { title: string; text: string; kept: string; syncTitle: string; sync: string; image: string };
+  care: {
+    title: string;
+    stop: { title: string; text: string; image: string };
+    clean: { title: string; text: string; image: string };
+  };
+  providers: { title: string; lead: string; head: [string, string]; rows: [string, string][]; note: string };
+  cli: { title: string; text: string; code: string; exit: string };
+  download: {
+    title: string;
+    released: string;
+    /** Per system: its name, and a sentence that helps choose among its installers. */
+    systems: Record<Platform, { name: string; hint: string }>;
+    /** The label of each installer's button, by slot key (mac-arm64-dmg …). */
+    variants: Record<string, string>;
+    /** Under a button whose file is not there yet. */
+    missing: string;
+    yours: string;
+    copy: string;
+    copied: string;
+    checkTitle: string;
+    checkText: string;
+    choose: string;
+    drop: string;
+    checking: string;
+    match: string;
+    mismatch: string;
+    unreadable: string;
+    terminal: string;
+    commands: Record<Platform, string>;
+    none: string;
+  };
+  footer: { title: string; text: string; source: string; license: string; imprint: string; privacy: string; top: string };
+}
+
+export const en: Content = {
+  lang: 'en',
+  locale: 'en-GB',
+  meta: {
+    title: 'IMAP Transfer: back up, restore and move mail accounts',
+    description:
+      'Free, open-source app for macOS, Windows and Linux. Backs up mail accounts as .eml files, restores them and moves them from one provider to another.',
+  },
+  nav: { skip: 'Skip to content', language: 'Deutsch', download: 'Download' },
+  preview: 'Preview with example data. The downloads on this page are not real.',
+  hero: {
+    title: ['Back up and', 'move your mail'],
+    lead:
+      'IMAP Transfer copies a mail account into a folder on your computer, back into an account, or straight into another provider. Free and open source, for macOS, Windows and Linux.',
+    button: 'Download',
+    buttonFor: { mac: 'Download for macOS', windows: 'Download for Windows', linux: 'Download for Linux' },
+    version: 'Version {version}.',
+    all: 'All systems and checksums',
+    soon: 'The first version is on its way.',
+    image:
+      'IMAP Transfer with three accounts in the sidebar. The open account offers back up, restore, migrate and optimize; its migration target is the same address on another server.',
+  },
+  backup: {
+    title: 'One file per message',
+    text: 'A backup is an ordinary folder: one `.eml` file per message, sorted into the folders of your account. Every mail program opens these files with a double click, so your mail stays readable without IMAP Transfer.',
+    facts: [
+      'The first run fetches everything. Every later run only fetches what is new.',
+      'Mail you delete in the account stays in the backup.',
+      'A Gmail message with five labels is stored once and goes back into all five.',
+      'A check compares every file with its checksum. An mbox export takes the backup to Thunderbird or Apple Mail.',
+    ],
+    tree: [
+      'anna@example.com/',
+      '├── README.txt',
+      '├── imaptransfer.db',
+      '└── mail/',
+      '    ├── INBOX/',
+      '    │   ├── 2024-05-03_Invoice May_3f2a9c01b4.eml',
+      '    │   └── 2024-05-06_Lunch on Friday_8c41d27e90.eml',
+      '    ├── Archive/',
+      '    │   └── 2023/',
+      '    │       └── 2023-11-20_Contract_b7e0a5f312.eml',
+      '    └── Sent/',
+      '        └── 2024-05-04_Offer for the garden_51d9c0e6a8.eml',
+    ].join('\n'),
+    caption: 'The backup of anna@example.com on disk. The index next to the mail remembers folders, flags and dates.',
+  },
+  migrate: {
+    title: 'From provider to provider',
+    text: 'Choose the target account, and IMAP Transfer shows every folder and where it goes: Sent becomes Sent Items, a missing folder is created. Mail that is already there is skipped, so a second run only brings what is new.',
+    kept: 'The old account stays as it is. The migration only reads from it.',
+    syncTitle: 'Or keep both in step',
+    sync: 'With **Sync**, what you delete or move in the old account happens in the new one too, and read and flagged follow. It works in one direction only. Whatever leaves a folder goes to the trash, and mail that only the new account holds stays.',
+    image:
+      'The plan of a migration from kontakt@example.org on imap.example.net to the same address on mail.example.org: a notice that nothing changes in the source, the Sync option, and five folders with their targets and message counts.',
+  },
+  care: {
+    title: 'Nothing lost, nothing twice',
+    stop: {
+      title: 'Stop whenever you like',
+      text: 'Close the laptop, lose the connection, press Stop: the next run continues where the last one ended, without a single duplicate. IMAP Transfer recognises each message by its Message-ID, date, sender and subject, on every server. Large messages show their own progress, and the app estimates the time left.',
+      image: 'A backup in progress: 1,240 of 3,518 messages, about ten minutes left, a large PDF on its way.',
+    },
+    clean: {
+      title: 'Copies cleaned up',
+      text: 'An interrupted sync with another tool can leave the same message in a folder several times. A test run lists every exact copy and changes nothing. Only then do you decide to move the copies to the trash; one of each stays, with all its flags.',
+      image: 'The test run of a cleanup: three copies in the inbox, nothing changed in the mailbox yet.',
+    },
+  },
+  providers: {
+    title: 'Works with your provider',
+    lead: 'Any IMAP server works. For these, the app knows the settings and tells you what to prepare.',
+    head: ['Provider', 'How you sign in'],
+    rows: [
+      ['Gmail', 'An app password. It needs two-step verification.'],
+      ['Outlook.com, Hotmail, Microsoft 365', '“Sign in with Microsoft” in the app. Microsoft no longer accepts passwords for IMAP.'],
+      ['iCloud, Yahoo', 'An app password from the account settings.'],
+      ['GMX, WEB.DE, freenet', 'The normal password, once IMAP access is switched on in the web mail.'],
+      ['T-Online', 'The separate email password, not the login password.'],
+      ['IONOS, STRATO, mittwald, Posteo, mailbox.org', 'The normal password.'],
+      ['Any other provider', 'Server, port and password.'],
+    ],
+    note: 'Passwords and sign-ins are stored encrypted in your system’s key store: Keychain on macOS, DPAPI on Windows, libsecret or KWallet on Linux.',
+  },
+  cli: {
+    title: 'On the command line',
+    text: 'The same engine runs on servers, NAS boxes and from cron, as `imaptransfer`. It needs Node.js 22.18 or newer, or Docker.',
+    code: [
+      '# Back up; later runs only fetch what is new',
+      'npx imaptransfer backup ~/Backups/anna --user anna@example.com',
+      '',
+      '# Every night at 2:00 (crontab -e)',
+      '0 2 * * * imaptransfer backup /srv/backups/anna --user anna@example.com --password-file /root/.anna-imap --quiet',
+      '',
+      '# Move an account and keep it in step',
+      'imaptransfer migrate --from-user anna@example.com --to-user anna@example.org --sync',
+      '',
+      '# On a NAS',
+      'docker run --rm -v /volume1/backups/anna:/backup -e IMAPTRANSFER_PASSWORD \\',
+      '  ghcr.io/scherhans/imaptransfer backup /backup --user anna@example.com',
+    ].join('\n'),
+    exit: 'Exit codes tell a script what happened: `0` done, `2` done but some messages failed, `1` failed, `130` stopped.',
+  },
+  download: {
+    title: 'Download',
+    released: 'Version {version}, released on {date}. Checksums: SHA-256.',
+    systems: {
+      mac: { name: 'macOS', hint: 'A disk image. Apple silicon for Macs with an M chip, Intel for older Macs.' },
+      windows: { name: 'Windows', hint: 'An installer. Intel and AMD for most PCs, ARM for laptops with a Snapdragon chip.' },
+      linux: { name: 'Linux', hint: 'The AppImage runs almost anywhere, the .deb package on Debian and Ubuntu.' },
+    },
+    variants: {
+      'mac-arm64-dmg': 'Apple silicon',
+      'mac-x64-dmg': 'Intel',
+      'windows-x64-exe': 'Intel and AMD',
+      'windows-arm64-exe': 'ARM',
+      'linux-x64-AppImage': 'AppImage, x64',
+      'linux-x64-deb': '.deb, x64',
+      'linux-arm64-AppImage': 'AppImage, ARM64',
+      'linux-arm64-deb': '.deb, ARM64',
+    },
+    missing: 'Not available yet',
+    yours: 'Your system',
+    copy: 'Copy',
+    copied: 'Copied',
+    checkTitle: 'Check the file',
+    checkText:
+      'Drop the downloaded file here, or choose it. Your browser computes the checksum itself and compares it with the checksums above; the file does not leave your computer.',
+    choose: 'Choose file',
+    drop: 'or drop it here',
+    checking: 'Computing the checksum of {name} …',
+    match: '{name} is intact: its checksum matches the published one.',
+    mismatch: '{name} matches none of the files of version {version}. Download it again from this page.',
+    unreadable: 'The browser could not read {name}. Choose it again, or check it in a terminal.',
+    terminal: 'Or in a terminal:',
+    commands: { mac: 'macOS', windows: 'Windows (PowerShell)', linux: 'Linux' },
+    none: 'The first version is not out yet. As soon as it is, the buttons below download it, each file with its checksum.',
+  },
+  footer: {
+    title: 'Your mail stays with you.',
+    text: 'No telemetry, no account, no cloud. The app only talks to your mail servers, and to GitHub to look for updates.',
+    source: 'Source code on GitHub',
+    license: 'MIT license',
+    imprint: 'Legal notice',
+    privacy: 'Privacy policy',
+    top: 'Back to the top',
+  },
+};
+
+export const de: Content = {
+  lang: 'de',
+  locale: 'de-DE',
+  meta: {
+    title: 'IMAP Transfer: Mailkonten sichern, wiederherstellen und umziehen',
+    description:
+      'Kostenlose Open-Source-App für macOS, Windows und Linux. Sichert Mailkonten als .eml-Dateien, spielt sie zurück und zieht sie von einem Anbieter zum anderen um.',
+  },
+  nav: { skip: 'Zum Inhalt', language: 'English', download: 'Herunterladen' },
+  preview: 'Vorschau mit Beispieldaten. Die Downloads auf dieser Seite sind nicht echt.',
+  hero: {
+    title: ['Mails sichern', 'und umziehen'],
+    lead:
+      'IMAP Transfer kopiert ein Mailkonto in einen Ordner auf Ihrem Computer, zurück in ein Konto oder direkt zu einem anderen Anbieter. Kostenlos und quelloffen, für macOS, Windows und Linux.',
+    button: 'Herunterladen',
+    buttonFor: { mac: 'Für macOS herunterladen', windows: 'Für Windows herunterladen', linux: 'Für Linux herunterladen' },
+    version: 'Version {version}.',
+    all: 'Alle Systeme und Prüfsummen',
+    soon: 'Die erste Version ist unterwegs.',
+    image:
+      'IMAP Transfer mit drei Konten in der Seitenleiste. Das geöffnete Konto bietet Sichern, Wiederherstellen, Umziehen und Postfach optimieren; als Zielkonto ist dieselbe Adresse auf einem anderen Server gewählt.',
+  },
+  backup: {
+    title: 'Eine Datei pro Mail',
+    text: 'Eine Sicherung ist ein gewöhnlicher Ordner: eine `.eml`-Datei pro Mail, einsortiert in die Ordner Ihres Kontos. Jedes Mailprogramm öffnet diese Dateien per Doppelklick. Ihre Mails bleiben also lesbar, auch ohne IMAP Transfer.',
+    facts: [
+      'Beim ersten Mal kommt alles, danach nur noch das Neue.',
+      'Was Sie im Konto löschen, bleibt in der Sicherung.',
+      'Eine Gmail-Mail mit fünf Labels liegt einmal in der Sicherung und kommt in alle fünf zurück.',
+      'Eine Prüfung vergleicht jede Datei mit ihrer Prüfsumme. Der mbox-Export bringt die Sicherung zu Thunderbird oder Apple Mail.',
+    ],
+    tree: [
+      'anna@example.com/',
+      '├── README.txt',
+      '├── imaptransfer.db',
+      '└── mail/',
+      '    ├── INBOX/',
+      '    │   ├── 2024-05-03_Rechnung Mai_3f2a9c01b4.eml',
+      '    │   └── 2024-05-06_Mittagessen am Freitag_8c41d27e90.eml',
+      '    ├── Archiv/',
+      '    │   └── 2023/',
+      '    │       └── 2023-11-20_Vertrag_b7e0a5f312.eml',
+      '    └── Gesendet/',
+      '        └── 2024-05-04_Angebot Garten_51d9c0e6a8.eml',
+    ].join('\n'),
+    caption: 'Die Sicherung von anna@example.com auf der Festplatte. Das Verzeichnis neben den Mails merkt sich Ordner, Markierungen und Datum.',
+  },
+  migrate: {
+    title: 'Von Anbieter zu Anbieter',
+    text: 'Sie wählen das Zielkonto, und IMAP Transfer zeigt jeden Ordner und wohin er kommt: Aus „Gesendet“ wird „Gesendete Elemente“, ein fehlender Ordner wird angelegt. Was schon im Ziel liegt, wird übersprungen. Ein zweiter Lauf bringt also nur das Neue.',
+    kept: 'Das alte Konto bleibt, wie es ist. Der Umzug liest dort nur.',
+    syncTitle: 'Oder beide im Gleichschritt',
+    sync: 'Mit **Abgleichen** geschieht, was Sie im alten Konto löschen oder verschieben, auch im neuen, und gelesen und markiert folgen. Das geht nur in eine Richtung. Was dabei wegfällt, kommt in den Papierkorb, und Mails, die nur im neuen Konto liegen, bleiben.',
+    image:
+      'Der Plan eines Umzugs von kontakt@example.org auf imap.example.net zur selben Adresse auf mail.example.org: der Hinweis, dass in der Quelle nichts verändert wird, die Wahl „Abgleichen“ und fünf Ordner mit Ziel und Anzahl der Mails.',
+  },
+  care: {
+    title: 'Nichts verloren, nichts doppelt',
+    stop: {
+      title: 'Abbrechen, wann Sie wollen',
+      text: 'Laptop zu, Verbindung weg oder „Abbrechen“ gedrückt: Der nächste Lauf macht dort weiter, wo der letzte aufgehört hat, ohne eine einzige doppelte Mail. IMAP Transfer erkennt jede Mail an Message-ID, Datum, Absender und Betreff, auf jedem Server. Große Mails zeigen ihren eigenen Fortschritt, und die App schätzt die Restzeit.',
+      image: 'Eine laufende Sicherung: 1.240 von 3.518 Mails, noch etwa zehn Minuten, ein großes PDF wird geladen.',
+    },
+    clean: {
+      title: 'Kopien aufgeräumt',
+      text: 'Ein abgebrochener Abgleich mit einem anderen Programm kann dieselbe Mail mehrfach in einem Ordner hinterlassen. Ein Testlauf zeigt jede exakte Kopie und ändert nichts. Erst danach entscheiden Sie, ob die Kopien in den Papierkorb kommen; von jeder Mail bleibt eine, mit allen Markierungen.',
+      image: 'Der Testlauf beim Aufräumen: drei Kopien im Posteingang, im Postfach wurde noch nichts verändert.',
+    },
+  },
+  providers: {
+    title: 'Klappt mit Ihrem Anbieter',
+    lead: 'Jeder IMAP-Server geht. Bei diesen kennt die App die Einstellungen und sagt, was Sie vorbereiten müssen.',
+    head: ['Anbieter', 'So melden Sie sich an'],
+    rows: [
+      ['Gmail', 'Mit einem App-Passwort. Dafür braucht es die Anmeldung in zwei Schritten.'],
+      ['Outlook.com, Hotmail, Microsoft 365', 'Mit „Mit Microsoft anmelden“ in der App. Microsoft nimmt für IMAP keine Passwörter mehr an.'],
+      ['iCloud, Yahoo', 'Mit einem App-Passwort aus den Kontoeinstellungen.'],
+      ['GMX, WEB.DE, freenet', 'Mit dem normalen Passwort, sobald der IMAP-Zugriff im Webmailer eingeschaltet ist.'],
+      ['T-Online', 'Mit dem eigenen E-Mail-Passwort, nicht dem Login-Passwort.'],
+      ['IONOS, STRATO, mittwald, Posteo, mailbox.org', 'Mit dem normalen Passwort.'],
+      ['Jeder andere Anbieter', 'Mit Server, Port und Passwort.'],
+    ],
+    note: 'Passwörter und Anmeldungen liegen verschlüsselt im Schlüsselbund Ihres Systems: Keychain unter macOS, DPAPI unter Windows, libsecret oder KWallet unter Linux.',
+  },
+  cli: {
+    title: 'Auf der Kommando\u00adzeile',
+    text: 'Dieselbe Technik läuft als `imaptransfer` auf Servern, NAS-Geräten und per cron. Sie braucht Node.js 22.18 oder neuer, oder Docker.',
+    code: [
+      '# Sichern; spätere Läufe holen nur das Neue',
+      'npx imaptransfer backup ~/Backups/anna --user anna@example.com',
+      '',
+      '# Jede Nacht um 2 Uhr (crontab -e)',
+      '0 2 * * * imaptransfer backup /srv/backups/anna --user anna@example.com --password-file /root/.anna-imap --quiet',
+      '',
+      '# Ein Konto umziehen und im Gleichschritt halten',
+      'imaptransfer migrate --from-user anna@example.com --to-user anna@example.org --sync',
+      '',
+      '# Auf einem NAS',
+      'docker run --rm -v /volume1/backups/anna:/backup -e IMAPTRANSFER_PASSWORD \\',
+      '  ghcr.io/scherhans/imaptransfer backup /backup --user anna@example.com',
+    ].join('\n'),
+    exit: 'Der Rückgabewert sagt einem Skript, was passiert ist: `0` fertig, `2` fertig, aber einige Mails fehlgeschlagen, `1` fehlgeschlagen, `130` abgebrochen.',
+  },
+  download: {
+    title: 'Herunterladen',
+    released: 'Version {version}, erschienen am {date}. Prüfsummen: SHA-256.',
+    systems: {
+      mac: { name: 'macOS', hint: 'Ein Disk-Image. Apple Silicon für Macs mit M-Chip, Intel für ältere Macs.' },
+      windows: { name: 'Windows', hint: 'Ein Installer. Intel und AMD für die meisten PCs, ARM für Laptops mit Snapdragon-Chip.' },
+      linux: { name: 'Linux', hint: 'Das AppImage läuft fast überall, das .deb-Paket auf Debian und Ubuntu.' },
+    },
+    variants: {
+      'mac-arm64-dmg': 'Apple Silicon',
+      'mac-x64-dmg': 'Intel',
+      'windows-x64-exe': 'Intel und AMD',
+      'windows-arm64-exe': 'ARM',
+      'linux-x64-AppImage': 'AppImage, x64',
+      'linux-x64-deb': '.deb, x64',
+      'linux-arm64-AppImage': 'AppImage, ARM64',
+      'linux-arm64-deb': '.deb, ARM64',
+    },
+    missing: 'Noch nicht verfügbar',
+    yours: 'Ihr System',
+    copy: 'Kopieren',
+    copied: 'Kopiert',
+    checkTitle: 'Datei prüfen',
+    checkText:
+      'Ziehen Sie die heruntergeladene Datei hierher oder wählen Sie sie aus. Ihr Browser rechnet die Prüfsumme selbst aus und vergleicht sie mit den Prüfsummen oben; die Datei verlässt Ihren Rechner nicht.',
+    choose: 'Datei wählen',
+    drop: 'oder hierher ziehen',
+    checking: 'Prüfsumme von {name} wird berechnet …',
+    match: '{name} ist unverändert: Die Prüfsumme stimmt mit der veröffentlichten überein.',
+    mismatch: '{name} passt zu keiner Datei der Version {version}. Laden Sie sie hier noch einmal herunter.',
+    unreadable: 'Der Browser konnte {name} nicht lesen. Wählen Sie die Datei noch einmal oder prüfen Sie sie im Terminal.',
+    terminal: 'Oder im Terminal:',
+    commands: { mac: 'macOS', windows: 'Windows (PowerShell)', linux: 'Linux' },
+    none: 'Die erste Version ist noch nicht erschienen. Sobald sie da ist, laden die Knöpfe unten sie herunter, jede Datei mit ihrer Prüfsumme.',
+  },
+  footer: {
+    title: 'Ihre Mails bleiben bei Ihnen.',
+    text: 'Keine Nutzungsstatistik, kein Konto, keine Cloud. Die App spricht nur mit Ihren Mailservern, und mit GitHub, um nach Updates zu sehen.',
+    source: 'Quellcode auf GitHub',
+    license: 'MIT-Lizenz',
+    imprint: 'Impressum',
+    privacy: 'Datenschutz',
+    top: 'Nach oben',
+  },
+};
+
+export const CONTENT: Record<Lang, Content> = { en, de };

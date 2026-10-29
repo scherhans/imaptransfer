@@ -1,0 +1,58 @@
+# Signing and notarization switch on by themselves when the secrets are present:
+#   macOS:   CSC_LINK + CSC_KEY_PASSWORD (Developer ID certificate),
+#            APPLE_API_KEY + APPLE_API_KEY_ID + APPLE_API_ISSUER (notarization)
+#   Windows: CSC_LINK + CSC_KEY_PASSWORD, or a signing service (see docs/releasing.md)
+# Without them the build is unsigned, which is fine for testing.
+appId: com.imaptransfer.app
+# Shown to people: app bundle, dock, window. Download file names stay technical (artifactName).
+productName: IMAP Transfer
+copyright: Copyright © 2026 Sebastian Scherhans and contributors
+directories:
+  # Installers land in release/ at the root of the repository, next to the apps, where they are easy to find.
+  output: ../../release
+  buildResources: build
+# The main process bundles all dependencies, so the app needs no node_modules folder.
+files:
+  - out/**
+  - package.json
+  - '!**/*.map'
+  # The licenses of the bundled packages go to the resources instead, where people find them.
+  - '!out/**/licenses.md'
+extraResources:
+  - from: out/main/licenses.md
+    to: licenses/app.md
+  - from: out/renderer/licenses.md
+    to: licenses/window.md
+npmRebuild: false
+mac:
+  category: public.app-category.utilities
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+    - target: zip
+      arch: [arm64, x64]
+  hardenedRuntime: true
+  # For the DMG and for the zip the updater downloads.
+  artifactName: imaptransfer-${version}-mac-${arch}.${ext}
+win:
+  target:
+    - target: nsis
+      arch: [x64, arm64]
+  artifactName: imaptransfer-${version}-windows-${arch}.${ext}
+nsis:
+  oneClick: true
+  perMachine: false
+linux:
+  target:
+    - target: AppImage
+      arch: [x64, arm64]
+    - target: deb
+      arch: [x64, arm64]
+  category: Utility
+  maintainer: Sebastian Scherhans <sebastian@imaptransfer.com>
+  synopsis: Back up, restore and migrate IMAP mail accounts
+  artifactName: imaptransfer-${version}-linux-${arch}.${ext}
+publish:
+  provider: github
+  owner: scherhans
+  repo: imaptransfer

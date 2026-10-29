@@ -1,0 +1,1081 @@
+/* IMAP Transfer website. The colours are the app's own, so the screenshots and the page belong
+   together: the light ground of the window, its ink, its petrol accent. */
+
+[hidden] {
+  display: none !important;
+}
+
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/newsreader-500.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/newsreader-600.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/hanken-grotesk-400.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/hanken-grotesk-600.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light;
+  /* The app window: its ground, its sidebar, its cards and lines. */
+  --grund: #f7f6f3;
+  --flaeche: #efede8;
+  --papier: #ffffff;
+  --linie: #e2dfd8;
+  --linie-stark: #cfcbc1;
+  /* The app's ink, a step darker for the quiet text so it reads on both grounds. */
+  --tinte: #1d1c1a;
+  --tinte-leise: #5c584f;
+  /* The petrol of the app icon and its buttons. */
+  --akzent: #0f6e63;
+  --akzent-dunkel: #0b564d;
+  --akzent-tinte: #ffffff;
+  --akzent-sanft: #e2f1ee;
+  /* The terminal: the petrol taken to night. */
+  --nacht: #10201d;
+  --nacht-flaeche: #182c28;
+  --nacht-tinte: #e8efed;
+  --nacht-leise: #a9bbb6;
+  --nacht-akzent: #7fd3c4;
+  --gut: #1f6b3a;
+  --fehler: #a3261f;
+  --hinweis: #fdf3dc;
+  --hinweis-tinte: #6b4500;
+  --fokus: #2a7de1;
+
+  --schrift-anzeige: 'Newsreader', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --schrift-text: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --schrift-code: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  --klein: clamp(0.875rem, 0.85rem + 0.1vw, 0.9375rem);
+  /* Checksums only: all 64 characters fit on one line at the page width. */
+  --pruefsumme: 0.8125rem;
+  --text: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
+  --vorspann: clamp(1.25rem, 1.05rem + 0.8vw, 1.75rem);
+  --titel: clamp(2.25rem, 1.5rem + 2.6vw, 3.75rem);
+  --anzeige: clamp(3rem, 1.2rem + 6vw, 6.75rem);
+
+  --rand: clamp(20px, 4vw, 56px);
+  /* The app window's own width: its screenshot shows at its real size. */
+  --breite: 1120px;
+  --abschnitt: clamp(88px, 4vw + 64px, 150px);
+  --radius: 14px;
+  --schatten-fenster: 0 0 0 1px rgb(29 28 26 / 0.08), 0 40px 80px -40px rgb(16 32 29 / 0.45);
+  --schatten-ausschnitt: 0 0 0 1px rgb(29 28 26 / 0.08), 0 24px 48px -28px rgb(16 32 29 / 0.35);
+
+  /* Motion: feedback is quick, the one moment of the page (the check mark) takes its time. */
+  --aus: cubic-bezier(0.23, 1, 0.32, 1);
+  --druck: 140ms;
+  --hover: 180ms;
+  --ui: 220ms;
+  --moment: 700ms;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--grund);
+  color: var(--tinte);
+  font: 400 var(--text) / 1.55 var(--schrift-text);
+  font-kerning: normal;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+picture {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: var(--akzent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  color: var(--akzent-dunkel);
+}
+
+:focus-visible {
+  outline: 3px solid var(--fokus);
+  outline-offset: 3px;
+}
+
+h1,
+h2,
+h3,
+p,
+figure,
+ul {
+  margin: 0;
+}
+
+h2 {
+  font-family: var(--schrift-anzeige);
+  font-size: var(--titel);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+h3 {
+  font-size: var(--vorspann);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+p,
+li {
+  max-width: 64ch;
+  text-wrap: pretty;
+}
+
+p + p {
+  margin-top: 0.9em;
+}
+
+code {
+  font-family: var(--schrift-code);
+  font-size: inherit;
+}
+
+strong {
+  font-weight: 600;
+}
+
+.klein {
+  font-size: var(--klein);
+}
+
+.leise {
+  color: var(--tinte-leise);
+}
+
+.vorspann {
+  font-size: var(--vorspann);
+  line-height: 1.35;
+  max-width: 34ch;
+}
+
+.springen {
+  position: absolute;
+  top: -120px;
+  left: var(--rand);
+  z-index: 10;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: var(--tinte);
+  color: var(--grund);
+  font-weight: 600;
+}
+
+.springen:focus {
+  top: 12px;
+}
+
+.vorschau {
+  max-width: none;
+  padding: 10px var(--rand);
+  background: var(--hinweis);
+  color: var(--hinweis-tinte);
+  font-size: var(--klein);
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Buttons: the shape of the app's own. */
+.knopf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 28px;
+  border: 1px solid var(--akzent);
+  border-radius: 10px;
+  background: var(--akzent);
+  color: var(--akzent-tinte);
+  font: 600 var(--text) / 1.2 var(--schrift-text);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform var(--druck) var(--aus),
+    background-color var(--hover) ease,
+    border-color var(--hover) ease,
+    color var(--hover) ease;
+}
+
+/* A press gives way a little: the page has heard. */
+.knopf:active,
+.kopieren:active {
+  transform: scale(0.97);
+}
+
+.knopf:hover {
+  border-color: var(--akzent-dunkel);
+  background: var(--akzent-dunkel);
+  color: var(--akzent-tinte);
+}
+
+.knopf-klein {
+  min-height: 44px;
+  padding: 0 18px;
+  font-size: var(--klein);
+}
+
+.knopf-zweit {
+  border-color: var(--linie-stark);
+  background: var(--papier);
+  color: var(--tinte);
+}
+
+.knopf-zweit:hover {
+  border-color: var(--tinte-leise);
+  background: var(--papier);
+  color: var(--tinte);
+}
+
+/* Header: the corners. */
+.kopf {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: calc(var(--breite) + 2 * var(--rand));
+  margin: 0 auto;
+  padding: 22px var(--rand);
+}
+
+.marke {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  color: var(--tinte);
+  font-size: var(--text);
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.marke:hover {
+  color: var(--tinte);
+}
+
+.marke img {
+  width: 36px;
+  height: 36px;
+}
+
+.kopf-rechts {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.sprache {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--tinte);
+  font-size: var(--klein);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.sprache:hover {
+  color: var(--tinte);
+  text-decoration: underline;
+}
+
+/* A flag is a small picture beside the word: a hairline keeps the white of a flag off the ground. */
+.flagge {
+  flex: none;
+  width: 21px;
+  height: 14px;
+  border-radius: 2px;
+  outline: 1px solid rgb(29 28 26 / 0.14);
+  outline-offset: -1px;
+}
+
+/* Every section: one column of the page width, the same edges. */
+.buehne,
+.abschnitt,
+.fuss {
+  max-width: calc(var(--breite) + 2 * var(--rand));
+  margin: 0 auto;
+  padding: 0 var(--rand);
+}
+
+.abschnitt {
+  margin-top: var(--abschnitt);
+}
+
+/* The stage: the statement, then the app itself. */
+.buehne {
+  padding-top: clamp(24px, 4vw, 64px);
+}
+
+.anzeige {
+  margin-left: -0.04em;
+  font-family: var(--schrift-anzeige);
+  font-size: var(--anzeige);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+}
+
+.buehne-zeile {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 32px 48px;
+  align-items: end;
+  margin-top: clamp(28px, 3vw, 44px);
+}
+
+/* The action sits at the right edge, under the header's own button. */
+.buehne-aktion {
+  display: grid;
+  justify-items: end;
+  gap: 14px;
+  text-align: right;
+}
+
+.fenster {
+  margin-top: clamp(44px, 5vw, 72px);
+}
+
+.fenster img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: var(--schatten-fenster);
+}
+
+.ausschnitt img {
+  border-radius: 12px;
+  box-shadow: var(--schatten-ausschnitt);
+}
+
+/* The backup: a folder on disk. */
+.sicherung {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 40px clamp(40px, 5vw, 88px);
+  align-items: start;
+}
+
+.sicherung-text > p {
+  margin-top: 24px;
+}
+
+.fakten {
+  margin-top: 28px;
+  padding-left: 1.1em;
+}
+
+.fakten li + li {
+  margin-top: 12px;
+}
+
+.fakten li::marker {
+  color: var(--tinte-leise);
+}
+
+.baum {
+  padding: clamp(20px, 3vw, 40px);
+  border-radius: var(--radius);
+  background: var(--flaeche);
+}
+
+.baum pre {
+  overflow-x: auto;
+  color: var(--tinte);
+  font: 400 var(--klein) / 1.75 var(--schrift-code);
+}
+
+.baum figcaption {
+  max-width: 60ch;
+  margin-top: 18px;
+}
+
+/* The migration: the plan beside its explanation. */
+.umzug {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 40px clamp(40px, 5vw, 80px);
+  align-items: center;
+}
+
+.umzug-text > p:first-of-type {
+  margin-top: 24px;
+}
+
+.bleibt {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 24px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: var(--akzent-sanft);
+  color: var(--akzent-dunkel);
+  font-weight: 600;
+}
+
+.bleibt .symbol {
+  flex: none;
+  margin-top: 0.15em;
+}
+
+.umzug-text h3 {
+  margin-top: 36px;
+}
+
+.umzug-text h3 + p {
+  margin-top: 12px;
+}
+
+/* Careful with every message: two things side by side, each with its screen. */
+.sorgfalt-paar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 48px clamp(40px, 5vw, 80px);
+  margin-top: clamp(36px, 4vw, 56px);
+}
+
+.sorgfalt-teil p {
+  margin-top: 14px;
+}
+
+.sorgfalt-teil .ausschnitt {
+  margin-top: 28px;
+}
+
+/* Tables: the one place with lines. */
+.tabelle {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.tabelle th,
+.tabelle td {
+  padding: 16px 20px 16px 0;
+  border-bottom: 1px solid var(--linie);
+  text-align: left;
+  vertical-align: top;
+}
+
+.tabelle thead th {
+  padding-top: 0;
+  border-bottom-color: var(--linie-stark);
+  color: var(--tinte-leise);
+  font-size: var(--klein);
+  font-weight: 600;
+}
+
+.tabelle tbody th {
+  font-weight: 600;
+}
+
+.tabelle .zahl {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* The heading over the whole width, then the explanation beside the table. */
+.anbieter {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: 36px clamp(40px, 5vw, 88px);
+  align-items: start;
+}
+
+.anbieter h2 {
+  grid-column: 1 / -1;
+}
+
+.anbieter-kopf p + p {
+  margin-top: 20px;
+}
+
+.anbieter-tabelle tbody th {
+  width: 40%;
+}
+
+/* The command line: the page's one dark field. */
+.feld-dunkel {
+  margin-top: var(--abschnitt);
+  padding: clamp(72px, 8vw, 120px) 0;
+  background: var(--nacht);
+  color: var(--nacht-tinte);
+}
+
+.feld-dunkel .abschnitt {
+  margin-top: 0;
+}
+
+.kommandozeile {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 40px clamp(40px, 5vw, 80px);
+  align-items: start;
+}
+
+.kommandozeile-text h2 {
+  hyphens: manual;
+}
+
+.kommandozeile-text p {
+  margin-top: 20px;
+}
+
+.feld-dunkel .klein {
+  color: var(--nacht-leise);
+}
+
+.feld-dunkel code {
+  color: var(--nacht-tinte);
+}
+
+.code {
+  overflow-x: auto;
+  padding: clamp(20px, 3vw, 32px);
+  border-radius: var(--radius);
+  background: var(--nacht-flaeche);
+  color: var(--nacht-tinte);
+  font: 400 var(--klein) / 1.75 var(--schrift-code);
+}
+
+.kommentar {
+  color: var(--nacht-leise);
+}
+
+/* Downloads. */
+.herunterladen-kopf {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px 32px;
+}
+
+.herunterladen-kopf p {
+  max-width: 64ch;
+}
+
+/* The systems one below the other; every installer on one line: button, size, checksum, copy. */
+.systeme {
+  display: grid;
+  gap: clamp(32px, 3.5vw, 44px);
+  margin-top: clamp(32px, 3.5vw, 48px);
+}
+
+.system-kopf {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 20px;
+}
+
+.system-kopf p {
+  max-width: none;
+}
+
+.system h3 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.deins {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--akzent-sanft);
+  color: var(--akzent-dunkel);
+  font-family: var(--schrift-text);
+  font-size: var(--klein);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.varianten {
+  margin-top: 12px;
+  padding: 0;
+  border-top: 1px solid var(--linie);
+  list-style: none;
+}
+
+/* The button column is fixed, so every button is as wide as the others, placeholders included. */
+.variante {
+  display: grid;
+  grid-template-columns: 15rem 4.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 20px;
+  max-width: none;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--linie);
+}
+
+.variante .knopf {
+  justify-content: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 16px;
+}
+
+.variante .symbol {
+  flex: none;
+}
+
+/* The visitor's system: its buttons take the accent. */
+.variante.ist-deins .knopf-zweit {
+  border-color: var(--akzent);
+  background: var(--akzent);
+  color: var(--akzent-tinte);
+}
+
+.variante.ist-deins .knopf-zweit:hover {
+  border-color: var(--akzent-dunkel);
+  background: var(--akzent-dunkel);
+}
+
+/* A slot whose file is not there yet: the button's outline, nothing to press. */
+.knopf-aus,
+.knopf-aus:hover {
+  border-style: dashed;
+  border-color: var(--linie-stark);
+  background: transparent;
+  color: var(--tinte-leise);
+  cursor: default;
+}
+
+.knopf-aus:active {
+  transform: none;
+}
+
+.variante .fehlt-text {
+  grid-column: 2 / -1;
+}
+
+.pruefsumme {
+  max-width: none;
+  margin: 0;
+}
+
+.pruefsumme code {
+  color: var(--tinte-leise);
+  font-size: var(--pruefsumme);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  overflow-wrap: anywhere;
+}
+
+.kopieren {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--linie-stark);
+  border-radius: 8px;
+  background: var(--papier);
+  color: var(--akzent-dunkel);
+  font: 600 var(--klein) / 1 var(--schrift-text);
+  cursor: pointer;
+  transition:
+    transform var(--druck) var(--aus),
+    border-color var(--hover) ease;
+}
+
+.kopieren:hover {
+  border-color: var(--akzent);
+}
+
+.pruefen {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 28px clamp(40px, 5vw, 80px);
+  margin-top: clamp(48px, 5vw, 72px);
+}
+
+.pruefen-text p {
+  margin-top: 12px;
+}
+
+.ablage {
+  transition:
+    border-color var(--ui) ease,
+    background-color var(--ui) ease;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
+  gap: 12px 16px;
+  min-height: 168px;
+  padding: 24px;
+  border: 2px dashed var(--linie-stark);
+  border-radius: var(--radius);
+  background: var(--papier);
+}
+
+.ablage.zieht {
+  border-color: var(--akzent);
+  background: var(--akzent-sanft);
+}
+
+.ablage:focus-within label {
+  outline: 3px solid var(--fokus);
+  outline-offset: 3px;
+}
+
+.unsichtbar {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  clip-path: inset(50%);
+}
+
+.ergebnis {
+  display: flex;
+  flex-basis: 100%;
+  align-items: flex-start;
+  gap: 10px;
+  max-width: none;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.ergebnis .zeichen {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The page's one moment: when the checksum matches, the check mark draws itself. */
+.ergebnis.gut .zeichen path {
+  stroke-dasharray: 1;
+  animation: zeichnen var(--moment) var(--aus) both;
+}
+
+@keyframes zeichnen {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .knopf:active,
+  .kopieren:active {
+    transform: none;
+  }
+
+  .ergebnis.gut .zeichen path {
+    animation: none;
+  }
+}
+
+.ergebnis:empty {
+  display: none;
+}
+
+.ergebnis.gut {
+  color: var(--gut);
+}
+
+.ergebnis.schlecht {
+  color: var(--fehler);
+}
+
+.terminal {
+  grid-column: 2;
+}
+
+.terminal ul {
+  display: grid;
+  gap: 12px;
+  margin-top: 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.terminal li {
+  display: grid;
+  gap: 4px;
+  max-width: none;
+}
+
+.terminal code {
+  display: block;
+  overflow-x: auto;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--flaeche);
+  font-size: var(--klein);
+  white-space: nowrap;
+}
+
+/* Footer: the last line of the page, then the facts. */
+.fuss {
+  margin-top: var(--abschnitt);
+  padding-bottom: 48px;
+}
+
+.schluss {
+  font-size: var(--anzeige);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+}
+
+.schluss-text {
+  max-width: 44ch;
+  margin-top: 24px;
+}
+
+.fuss-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 28px;
+  margin-top: 56px;
+  padding: 0;
+  list-style: none;
+}
+
+.fuss-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--tinte);
+  font-weight: 600;
+}
+
+.fuss .klein {
+  margin-top: 12px;
+}
+
+/* The legal pages: one reading column. */
+.rechtliches {
+  max-width: calc(68ch + 2 * var(--rand));
+  margin: clamp(32px, 5vw, 72px) auto 0;
+  padding: 0 var(--rand);
+}
+
+.rechtliches h1 {
+  font-family: var(--schrift-anzeige);
+  font-size: var(--titel);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+
+.rechtliches h2 {
+  margin-top: 40px;
+  font-family: var(--schrift-text);
+  font-size: var(--vorspann);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.rechtliches h1 + p {
+  margin-top: 32px;
+}
+
+.rechtliches h2 + p {
+  margin-top: 12px;
+}
+
+.rechtliches a {
+  overflow-wrap: anywhere;
+}
+
+.rechtliches .stand {
+  margin-top: 48px;
+}
+
+/* Narrow screens: one column, the stage first. */
+@media (max-width: 960px) {
+  .buehne-zeile,
+  .sicherung,
+  .umzug,
+  .anbieter,
+  .kommandozeile,
+  .pruefen {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .buehne-aktion {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .terminal {
+    grid-column: auto;
+  }
+
+  .umzug-bild {
+    order: 2;
+  }
+}
+
+@media (max-width: 960px) {
+  /* Size above, copy button below in a second column wide enough for the button. */
+  .variante {
+    grid-template-columns: minmax(0, 1fr) 6.5rem;
+  }
+
+  .groesse {
+    justify-self: end;
+  }
+
+  .variante .fehlt-text {
+    grid-column: 1 / -1;
+  }
+
+  .kopieren {
+    justify-self: end;
+  }
+}
+
+/* The two careful things stay side by side on a tablet. */
+@media (max-width: 720px) {
+  .sorgfalt-paar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .kopf {
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  /* The stage's own button is right below; the header keeps the language. */
+  .kopf-rechts .knopf-klein {
+    display: none;
+  }
+
+  .schluss {
+    font-size: var(--titel);
+  }
+
+  .vorspann {
+    max-width: none;
+  }
+
+  .knopf {
+    width: 100%;
+  }
+
+  .knopf-klein,
+  .ablage .knopf {
+    width: auto;
+  }
+
+  .fenster {
+    margin-right: calc(-1 * var(--rand));
+  }
+
+  .fenster img {
+    border-radius: 12px 0 0 12px;
+  }
+
+  .anbieter-tabelle thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .anbieter-tabelle,
+  .anbieter-tabelle tbody,
+  .anbieter-tabelle tr,
+  .anbieter-tabelle tbody th,
+  .anbieter-tabelle td {
+    display: block;
+    width: auto;
+  }
+
+  .anbieter-tabelle tr {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--linie);
+  }
+
+  .anbieter-tabelle tbody th,
+  .anbieter-tabelle td {
+    padding: 0;
+    border: 0;
+  }
+
+  .anbieter-tabelle td {
+    margin-top: 4px;
+  }
+
+  .kopieren {
+    min-height: 44px;
+    padding: 0 10px;
+  }
+
+  /* Two lines of 32 characters beside the copy button, which needs no more than its column. */
+  .variante {
+    grid-template-columns: minmax(0, 1fr) 5.25rem;
+    column-gap: 8px;
+  }
+
+  .pruefsumme code {
+    letter-spacing: 0;
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "imaptransfer-desktop",
+  "productName": "IMAP Transfer",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Back up, restore and migrate IMAP mail accounts",
+  "license": "MIT",
+  "author": "Sebastian Scherhans <sebastian@imaptransfer.com>",
+  "homepage": "https://imaptransfer.com",
+  "type": "module",
+  "main": "./out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "typecheck": "vue-tsc -p tsconfig.web.json --noEmit && tsc -p tsconfig.node.json --noEmit",
+    "test": "node --test --disable-warning=ExperimentalWarning \"test/*.test.ts\"",
+    "test:e2e": "electron test/e2e.mjs",
+    "icon": "electron scripts/render-icon.mjs",
+    "screenshots": "electron scripts/screenshots.mjs",
+    "dist": "electron-vite build && electron-builder --publish never",
+    "dist:dir": "electron-vite build && electron-builder --dir"
+  },
+  "devDependencies": {
+    "@imaptransfer/core": "workspace:*",
+    "@types/node": "^24.0.0",
+    "@vitejs/plugin-vue": "^6.0.10",
+    "electron": "^45.0.0",
+    "electron-builder": "^26.18.0",
+    "electron-updater": "^6.8.11",
+    "electron-vite": "^6.0.0",
+    "typescript": "~5.9.3",
+    "vite": "^8.3.5",
+    "vue": "^3.5.44",
+    "vue-i18n": "^11.4.16",
+    "vue-tsc": "^3.3.13"
+  }
+}

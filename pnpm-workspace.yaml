@@ -1,0 +1,10 @@
+packages:
+  - packages/*
+  - apps/*
+
+# Electron downloads its binary in a build script. electron-winstaller (Squirrel for Windows)
+# comes with electron-builder but is not used: Windows builds use NSIS.
+onlyBuiltDependencies:
+  - electron
+ignoredBuiltDependencies:
+  - electron-winstaller

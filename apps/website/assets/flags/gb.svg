@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 30">
+  <!-- The Union Flag in 3:2, for the link to the English pages. -->
+  <clipPath id="flagge"><path d="M0 0h45v30H0z"/></clipPath>
+  <clipPath id="gegenwechsel"><path d="M22.5 15H45v15zv15H0zH0V0zV0h22.5z"/></clipPath>
+  <g clip-path="url(#flagge)">
+    <path d="M0 0h45v30H0z" fill="#012169"/>
+    <path d="M0 0l45 30M45 0L0 30" stroke="#fff" stroke-width="6"/>
+    <path d="M0 0l45 30M45 0L0 30" clip-path="url(#gegenwechsel)" stroke="#c8102e" stroke-width="4"/>
+    <path d="M22.5 0v30M0 15h45" stroke="#fff" stroke-width="10"/>
+    <path d="M22.5 0v30M0 15h45" stroke="#c8102e" stroke-width="6"/>
+  </g>
+</svg>

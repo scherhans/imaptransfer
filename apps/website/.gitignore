@@ -1,0 +1,3 @@
+# dist/ and node_modules/ are ignored at the root.
+preview/
+.pruefen/

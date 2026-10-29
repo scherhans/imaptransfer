@@ -1,0 +1,23 @@
+{
+  "name": "imaptransfer-website",
+  "private": true,
+  "type": "module",
+  "description": "The website imaptransfer.com: landing page, downloads with checksums, legal notice and privacy policy, in English and German",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "node src/build.ts",
+    "preview": "node src/build.ts --example --out preview",
+    "serve": "node src/serve.ts",
+    "test": "node --test --disable-warning=ExperimentalWarning \"test/*.test.ts\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@fontsource/hanken-grotesk": "5.3.0",
+    "@fontsource/newsreader": "5.3.0",
+    "@types/node": "24.19.2",
+    "typescript": "5.9.3"
+  }
+}

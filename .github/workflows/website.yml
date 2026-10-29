@@ -1,0 +1,138 @@
+name: Website
+
+# imaptransfer.com, from apps/website. Every change to the site is checked. It goes live at mittwald
+# when main changes it, when a release is published (new installers and checksums), or by hand.
+# The installers come from the GitHub release; the site serves them itself under /downloads/.
+#
+# Going live needs the environment "production" with the secrets MITTWALD_SSH_KEY,
+# MITTWALD_KNOWN_HOSTS, MITTWALD_SSH_USER and MITTWALD_SSH_HOST, and the repository variable
+# MITTWALD_PATH (the site's folder on the server). Without MITTWALD_PATH the deploy job is skipped.
+# See apps/website/README.md.
+on:
+  push:
+    branches: [main]
+    paths: ['apps/website/**', '.github/workflows/website.yml']
+  pull_request:
+    paths: ['apps/website/**', '.github/workflows/website.yml']
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check the website
+    runs-on: ubuntu-latest
+    concurrency:
+      group: website-check-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --filter imaptransfer-website
+      - run: pnpm --filter imaptransfer-website typecheck
+      - run: pnpm --filter imaptransfer-website test
+
+  deploy:
+    name: Deploy to mittwald
+    needs: check
+    if: github.event_name != 'pull_request' && vars.MITTWALD_PATH != ''
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://imaptransfer.com
+    # One deploy at a time, and never cut off halfway.
+    concurrency:
+      group: website-deploy
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --filter imaptransfer-website
+
+      - name: Files of the release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_PUBLISHED: ${{ github.event.release.published_at }}
+        run: |
+          dir="$RUNNER_TEMP/release"
+          mkdir -p "$dir"
+          if [ "$EVENT" = release ]; then
+            tag="$RELEASE_TAG"
+            published="$RELEASE_PUBLISHED"
+          else
+            # The latest published release. None yet is fine; any other answer stops the deploy,
+            # so a hiccup never puts a page without downloads online.
+            status=$(curl -sS -o "$RUNNER_TEMP/latest.json" -w '%{http_code}' \
+              -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' \
+              "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/latest")
+            case "$status" in
+              200)
+                tag=$(jq -r .tag_name "$RUNNER_TEMP/latest.json")
+                published=$(jq -r .published_at "$RUNNER_TEMP/latest.json")
+                ;;
+              404)
+                echo "No published release yet: every download shows as not available."
+                tag=''
+                published=''
+                ;;
+              *)
+                echo "::error::GitHub answered $status for the latest release"
+                exit 1
+                ;;
+            esac
+          fi
+          if [ -n "$tag" ]; then
+            gh release download "$tag" --repo "$GITHUB_REPOSITORY" --dir "$dir"
+          fi
+          echo "dir=$dir" >> "$GITHUB_OUTPUT"
+          echo "published=$published" >> "$GITHUB_OUTPUT"
+
+      - name: Build the site
+        env:
+          RELEASE_DIR: ${{ steps.release.outputs.dir }}
+          PUBLISHED: ${{ steps.release.outputs.published }}
+        run: |
+          args=(--release "$RELEASE_DIR")
+          if [ -n "$PUBLISHED" ]; then args+=(--published "$PUBLISHED"); fi
+          pnpm --filter imaptransfer-website build "${args[@]}"
+
+      - name: SSH access to mittwald
+        env:
+          SSH_KEY: ${{ secrets.MITTWALD_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.MITTWALD_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 "$HOME/.ssh"
+          printf '%s\n' "$SSH_KEY" > "$HOME/.ssh/mittwald"
+          chmod 600 "$HOME/.ssh/mittwald"
+          printf '%s\n' "$KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+
+      - name: Upload
+        env:
+          SSH_USER: ${{ secrets.MITTWALD_SSH_USER }}
+          SSH_HOST: ${{ secrets.MITTWALD_SSH_HOST }}
+          SITE_PATH: ${{ vars.MITTWALD_PATH }}
+        run: |
+          # mittwald's user names contain "@" (mail@app), so the user goes to ssh by itself, not
+          # as user@host, where it would be unclear which "@" starts the host.
+          ssh="ssh -i $HOME/.ssh/mittwald -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts -l $SSH_USER"
+          site=apps/website/dist
+          # The new files first, so no page ever links to one that is not there yet.
+          if [ -d "$site/downloads" ]; then
+            rsync -rlc --chmod=D755,F644 -e "$ssh" "$site/downloads/" "$SSH_HOST:$SITE_PATH/downloads/"
+          fi
+          # Then the pages. What the new version no longer has goes last; .well-known stays.
+          rsync -rlc --delete --delete-after --filter='P .well-known/' --chmod=D755,F644 -e "$ssh" "$site/" "$SSH_HOST:$SITE_PATH/"

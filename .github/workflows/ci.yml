@@ -1,0 +1,76 @@
+name: CI
+
+# A change only to the website needs none of these; it has its own workflow (website.yml).
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['apps/website/**', '.github/workflows/website.yml']
+  pull_request:
+    paths-ignore: ['apps/website/**', '.github/workflows/website.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Tests (Linux, with mail server)
+    runs-on: ubuntu-latest
+    services:
+      greenmail:
+        image: greenmail/standalone:2.1.15
+        env:
+          GREENMAIL_OPTS: >-
+            -Dgreenmail.setup.test.imap -Dgreenmail.setup.test.imaps -Dgreenmail.hostname=0.0.0.0
+            -Dgreenmail.auth.disabled -Dgreenmail.verbose=false
+        ports:
+          - 3143:3143
+          - 3993:3993
+    env:
+      GREENMAIL_EXTERNAL: '1'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm typecheck
+      - run: pnpm test
+      - name: Integration tests against GreenMail
+        run: node scripts/with-greenmail.mjs pnpm --filter @imaptransfer/core test:integration
+      # Ubuntu 24.04 forbids the user namespaces Chromium's sandbox needs, and Electron then aborts
+      # ("The SUID sandbox helper binary was found, but is not configured correctly").
+      - name: Allow Chromium's sandbox
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      - name: Desktop app end to end
+        run: xvfb-run -a node scripts/with-greenmail.mjs pnpm --filter imaptransfer-desktop test:e2e
+        env:
+          SHOTS: ${{ runner.temp }}/screenshots
+      - name: Screenshots of the end-to-end test
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-screenshots
+          path: ${{ runner.temp }}/screenshots
+          if-no-files-found: ignore
+
+  platforms:
+    name: Build and unit tests (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm typecheck
+      - run: pnpm test
