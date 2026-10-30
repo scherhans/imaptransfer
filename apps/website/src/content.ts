@@ -175,7 +175,10 @@ export const en: Content = {
     released: 'Version {version}, released on {date}. Checksums: SHA-256.',
     systems: {
       mac: { name: 'macOS', hint: 'A disk image. Apple silicon for Macs with an M chip, Intel for older Macs.' },
-      windows: { name: 'Windows', hint: 'An installer. Intel and AMD for most PCs, ARM for laptops with a Snapdragon chip.' },
+      windows: {
+        name: 'Windows',
+        hint: 'An installer. Intel and AMD for most PCs, ARM for laptops with a Snapdragon chip. We have applied to the SignPath Foundation for code signing; until then Windows warns when you start the installer.',
+      },
       linux: { name: 'Linux', hint: 'The AppImage runs almost anywhere, the .deb package on Debian and Ubuntu.' },
     },
     variants: {
@@ -319,7 +322,10 @@ export const de: Content = {
     released: 'Version {version}, erschienen am {date}. Prüfsummen: SHA-256.',
     systems: {
       mac: { name: 'macOS', hint: 'Ein Disk-Image. Apple Silicon für Macs mit M-Chip, Intel für ältere Macs.' },
-      windows: { name: 'Windows', hint: 'Ein Installer. Intel und AMD für die meisten PCs, ARM für Laptops mit Snapdragon-Chip.' },
+      windows: {
+        name: 'Windows',
+        hint: 'Ein Installer. Intel und AMD für die meisten PCs, ARM für Laptops mit Snapdragon-Chip. Die Code-Signierung haben wir bei der SignPath Foundation beantragt; bis dahin warnt Windows beim Start des Installers.',
+      },
       linux: { name: 'Linux', hint: 'Das AppImage läuft fast überall, das .deb-Paket auf Debian und Ubuntu.' },
     },
     variants: {
