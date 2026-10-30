@@ -16,6 +16,7 @@ import { CONFLICT_MARK, type AccountDraft, type AppInfo, type DuplicateSearchPro
 import { secretStorageStrength, type AccountSecret, type AccountStore } from './accounts';
 import { backupIn, type JobRunner } from './jobs';
 import type { SettingsStore } from './settings';
+import { updatesBuiltIn } from './updater';
 import { forgetSignIn, microsoftClientId, pendingSignIn, signInMicrosoft } from './signin';
 
 /** Like `ipcMain.handle`, but a known conflict reaches the window with its code (see `CONFLICT_MARK`). */
@@ -136,6 +137,7 @@ export function registerIpc(accounts: AccountStore, jobs: JobRunner, settings: S
     microsoftSignIn: Boolean(microsoftClientId()),
     secretStorage: await secretStorageStrength(),
     accountsProblem: accounts.problem,
+    updatesBuiltIn,
   }));
   handle('app:defaultBackupDirectory', (_event, name: unknown) =>
     join(app.getPath('documents'), 'IMAP Transfer', safeFolderName(requireString(name, 'name'))),

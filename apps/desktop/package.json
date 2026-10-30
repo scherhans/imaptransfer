@@ -19,6 +19,7 @@
     "icon": "electron scripts/render-icon.mjs",
     "screenshots": "electron scripts/screenshots.mjs",
     "website-icons": "electron scripts/website-icons.mjs",
+    "store-icons": "electron scripts/store-icons.mjs",
     "dist": "electron-vite build && electron-builder --publish never",
     "dist:dir": "electron-vite build && electron-builder --dir"
   },

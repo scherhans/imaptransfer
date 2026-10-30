@@ -23,6 +23,12 @@ const nl: typeof de = {
     },
     weakSecrets: 'Dit systeem heeft geen sleutelhanger. Wachtwoorden worden alleen versluierd op schijf bewaard.',
     accountsProblem: 'Probleem met het accountbestand:',
+    updates: {
+      label: 'Bij het starten zoeken naar nieuwe versies',
+      text: 'IMAP Transfer kan bij elke start aan GitHub vragen of er een nieuwe versie is en die installeren. GitHub ontvangt daarbij uw IP-adres. U kunt dit altijd wijzigen onder in de zijbalk.',
+      privacy: 'Privacyverklaring',
+      privacyUrl: 'https://imaptransfer.com/privacy/',
+    },
   },
   welcome: {
     title: 'Welkom bij IMAP Transfer',

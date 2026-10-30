@@ -74,3 +74,27 @@ jobs:
       - run: pnpm build
       - run: pnpm typecheck
       - run: pnpm test
+      # With stand-in values: the real identity comes from Partner Center, see docs/releasing.md.
+      - name: Package for the Microsoft Store
+        if: runner.os == 'Windows'
+        shell: bash
+        run: >-
+          pnpm --filter imaptransfer-desktop exec electron-builder --win appx --x64 --publish never
+          -c.appx.identityName=Example.IMAPTransfer -c.appx.publisher=CN=00000000-0000-0000-0000-000000000000
+          -c.appx.publisherDisplayName=Example
+      - name: Look inside the Store package
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $package = Get-ChildItem release/*.appx | Select-Object -First 1
+          Copy-Item $package.FullName "$env:RUNNER_TEMP/store.zip"
+          Expand-Archive "$env:RUNNER_TEMP/store.zip" "$env:RUNNER_TEMP/store"
+          $manifest = Get-Content "$env:RUNNER_TEMP/store/AppxManifest.xml" -Raw
+          Write-Output $manifest
+          if ($manifest -notmatch 'Name="Example.IMAPTransfer"') { throw 'The identity is not in the manifest.' }
+          if ($manifest -notmatch 'runFullTrust') { throw 'runFullTrust is not in the manifest.' }
+          foreach ($tile in 'StoreLogo', 'Square44x44Logo', 'Square150x150Logo', 'Wide310x150Logo') {
+            $own = Get-FileHash "apps/desktop/build/appx/$tile.png"
+            $packed = Get-FileHash "$env:RUNNER_TEMP/store/assets/$tile.png"
+            if ($own.Hash -ne $packed.Hash) { throw "$tile is not our tile." }
+          }

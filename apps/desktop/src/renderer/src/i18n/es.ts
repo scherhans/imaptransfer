@@ -23,6 +23,12 @@ const es: typeof de = {
     },
     weakSecrets: 'Este sistema no tiene llavero. Las contraseñas solo se guardan ofuscadas en el disco.',
     accountsProblem: 'Problema con el archivo de cuentas:',
+    updates: {
+      label: 'Buscar nuevas versiones al iniciar',
+      text: 'IMAP Transfer puede preguntar a GitHub en cada inicio si hay una versión nueva e instalarla. GitHub recibe entonces su dirección IP. Puede cambiarlo en cualquier momento abajo en la barra lateral.',
+      privacy: 'Política de privacidad',
+      privacyUrl: 'https://imaptransfer.com/privacy/',
+    },
   },
   welcome: {
     title: 'Bienvenido a IMAP Transfer',

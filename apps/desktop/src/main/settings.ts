@@ -5,12 +5,12 @@ import { isLanguageChoice, savedLanguage } from '../shared/languages';
 
 const THEMES: readonly unknown[] = ['system', 'light', 'dark'] satisfies ThemeChoice[];
 const ORDERS: readonly unknown[] = ['address', 'provider'] satisfies AccountOrder[];
-const DEFAULTS: Settings = { theme: 'system', language: 'system', accountOrder: 'address' };
+const DEFAULTS: Settings = { theme: 'system', language: 'system', accountOrder: 'address', updateCheck: null };
 
 const isTheme = (value: unknown): value is ThemeChoice => THEMES.includes(value);
 const isOrder = (value: unknown): value is AccountOrder => ORDERS.includes(value);
 
-/** Preferences of the app itself, next to the accounts: the look, the language and the order of the accounts. */
+/** Preferences of the app itself, next to the accounts: the look, the language, the order of the accounts and the update check. */
 export class SettingsStore {
   private readonly file: string;
   private settings: Settings;
@@ -27,6 +27,7 @@ export class SettingsStore {
         theme: isTheme(content.theme) ? content.theme : DEFAULTS.theme,
         language: savedLanguage(content.language),
         accountOrder: isOrder(content.accountOrder) ? content.accountOrder : DEFAULTS.accountOrder,
+        updateCheck: typeof content.updateCheck === 'boolean' ? content.updateCheck : DEFAULTS.updateCheck,
       };
     } catch {
       // Missing or damaged: the defaults are a fine start, nothing of value is lost.
@@ -52,6 +53,10 @@ export class SettingsStore {
     if (change.accountOrder !== undefined) {
       if (!isOrder(change.accountOrder)) throw new Error(`Unknown account order ${String(change.accountOrder)}`);
       next.accountOrder = change.accountOrder;
+    }
+    if (change.updateCheck !== undefined) {
+      if (typeof change.updateCheck !== 'boolean') throw new Error(`Unknown update choice ${String(change.updateCheck)}`);
+      next.updateCheck = change.updateCheck;
     }
     this.write(next);
     this.settings = next;

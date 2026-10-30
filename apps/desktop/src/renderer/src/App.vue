@@ -7,6 +7,7 @@ import AccountLabel from './components/AccountLabel.vue';
 import AccountView from './components/AccountView.vue';
 import Icon from './components/Icon.vue';
 import JobPanel from './components/JobPanel.vue';
+import UpdateNotice from './components/UpdateNotice.vue';
 import Welcome from './components/Welcome.vue';
 import { formatRelative } from './format';
 import { jobRunning, selectedAccount, showAccount, sortedAccounts, state, updateSettings } from './store';
@@ -99,6 +100,14 @@ function status(account: (typeof state.accounts)[number]): string {
             <option v-for="(name, code) in LANGUAGES" :key="code" :value="code" :lang="code">{{ name }}</option>
           </select>
         </label>
+        <label v-if="state.info.updatesBuiltIn && state.info.settings.updateCheck !== null" class="checkbox updates muted small">
+          <input
+            type="checkbox"
+            :checked="state.info.settings.updateCheck"
+            @change="updateSettings({ updateCheck: ($event.target as HTMLInputElement).checked })"
+          />
+          <span>{{ t('app.updates.label') }}</span>
+        </label>
         <div class="foot">
           <span class="muted small">{{ t('app.version', { version: state.info.version }) }}</span>
           <div class="segmented theme" role="group" :aria-label="t('app.theme.label')">
@@ -119,6 +128,7 @@ function status(account: (typeof state.accounts)[number]): string {
     </aside>
 
     <main class="content">
+      <UpdateNotice v-if="state.info?.updatesBuiltIn && state.info.settings.updateCheck === null" />
       <JobPanel v-if="state.job" :job="state.job" />
       <AccountEditor
         v-else-if="state.view.name === 'editor'"

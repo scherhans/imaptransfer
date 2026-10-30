@@ -9,7 +9,7 @@ import { JobRunner } from './jobs';
 import { installMenu } from './menu';
 import { SettingsStore } from './settings';
 import { setLanguage, texts, type JobName } from './texts';
-import { checkForUpdates } from './updater';
+import { followUpdateChoice } from './updater';
 
 const here = dirname(fileURLToPath(import.meta.url));
 let window: BrowserWindow | null = null;
@@ -142,15 +142,18 @@ const jobs = new JobRunner(accounts, {
 
 const settings = new SettingsStore(join(userData, 'settings.json'));
 
-/** Applies the look and the language: once at the start, then whenever the user changes them. */
+/** Applies the look, the language and the update choice: once at the start, then whenever the user changes them. */
 function applySettings(): void {
-  const { theme, language } = settings.current;
+  const { theme, language, updateCheck } = settings.current;
   // Native parts (dialogs, title bar, menus) and the window's `prefers-color-scheme` follow
   // `themeSource`, so the stylesheet needs no second switch.
   nativeTheme.themeSource = theme;
   window?.setBackgroundColor(windowBackground());
   setLanguage(language);
-  if (app.isReady()) installMenu();
+  if (app.isReady()) {
+    installMenu();
+    followUpdateChoice(updateCheck === true);
+  }
 }
 applySettings();
 nativeTheme.on('updated', () => window?.setBackgroundColor(windowBackground()));
@@ -184,5 +187,5 @@ app.on('activate', () => {
 void app.whenReady().then(() => {
   installMenu();
   window = createWindow();
-  checkForUpdates();
+  followUpdateChoice(settings.current.updateCheck === true);
 });

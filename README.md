@@ -62,7 +62,7 @@ The app is in English, German, French, Spanish, Italian, Dutch and Portuguese. I
 | T-Online | The separate email password, not the login password. |
 | Any other provider | Server, port and password; the app suggests settings for many providers. |
 
-Passwords and sign-ins are stored encrypted with the operating system's key store (Keychain on macOS, DPAPI on Windows, libsecret or KWallet on Linux). IMAP Transfer talks only to your mail servers: no telemetry, no account, no cloud.
+Passwords and sign-ins are stored encrypted with the operating system's key store (Keychain on macOS, DPAPI on Windows, libsecret or KWallet on Linux). IMAP Transfer talks only to your mail servers and, if you allow it at the first start, to GitHub to look for new versions: no telemetry, no account, no cloud.
 
 ## Command line
 
