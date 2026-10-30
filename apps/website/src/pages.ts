@@ -96,7 +96,7 @@ function head(c: Content, kind: PageKind | 'notFound', path: string, title: stri
   <link rel="preload" href="${relative(path, '/assets/fonts/newsreader-500.woff2')}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="${relative(path, '/assets/fonts/hanken-grotesk-400.woff2')}" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="${relative(path, '/assets/site.css')}">
-  ${kind === 'home' || kind === 'download' ? `<script src="${relative(path, '/assets/site.js')}" defer></script>` : ''}
+  ${kind === 'home' ? `<script src="${relative(path, '/assets/site.js')}" defer></script>` : ''}
 </head>`;
 }
 
@@ -107,22 +107,17 @@ function languageLink(c: Content, kind: PageKind | 'notFound', path: string, cla
   return `<a${className ? ` class="${className}"` : ''} href="${relative(path, target)}" hreflang="${switchTo}" lang="${switchTo}">${flag}${c.nav.language}</a>`;
 }
 
-/** The header on every page: the name leads home, the navigation to the features, the command line and the download page, which says when it is the one shown. */
 function header(c: Content, kind: PageKind | 'notFound', path: string): string {
-  const home = PATHS.home[c.lang];
-  const current = kind === 'download' ? ' aria-current="page"' : '';
   return `<header class="kopf">
-  <a class="marke" href="${relative(path, home)}"><img src="${relative(path, '/assets/icon.svg')}" alt="" width="36" height="36"><span>IMAP Transfer</span></a>
-  <nav class="kopf-nav" aria-label="${escape(c.nav.label)}">
-    <a href="${relative(path, `${home}#backup`)}">${escape(c.nav.features)}</a>
-    <a href="${relative(path, `${home}#cli`)}">${escape(c.nav.cli)}</a>
-    <a class="knopf knopf-klein" href="${relative(path, PATHS.download[c.lang])}"${current}>${escape(c.nav.download)}</a>
-  </nav>
-  ${languageLink(c, kind, path, 'sprache')}
+  <a class="marke" href="${relative(path, PATHS.home[c.lang])}"><img src="${relative(path, '/assets/icon.svg')}" alt="" width="36" height="36"><span>IMAP Transfer</span></a>
+  <div class="kopf-rechts">
+    ${languageLink(c, kind, path, 'sprache')}
+    <a class="knopf knopf-klein" href="${relative(path, `${PATHS.home[c.lang]}#download`)}">${escape(c.nav.download)}</a>
+  </div>
 </header>`;
 }
 
-function footer(c: Content, kind: PageKind | 'notFound', path: string, context: RenderContext): string {
+function footer(c: Content, kind: PageKind | 'notFound', path: string): string {
   const links = [
     `<a href="${githubUrl()}" rel="noopener">${c.footer.source}</a>`,
     `<a href="${githubUrl('/blob/main/LICENSE')}" rel="noopener">${c.footer.license}</a>`,
@@ -136,17 +131,13 @@ function footer(c: Content, kind: PageKind | 'notFound', path: string, context: 
     kind === 'home'
       ? `<h2 class="schluss">${escape(c.footer.title)}</h2>
   <p class="vorspann schluss-text">${escape(c.footer.text)}</p>
-  <div class="holen" id="download">
-    ${downloadButton(c, path, 'knopf-hell')}
-    <p>${downloadNote(c, path, context.release, c.footer.download)}</p>
-  </div>
   <div class="unterstuetzen">
     ${CUP}
     <div class="unterstuetzen-text">
       <h3>${escape(c.footer.supportTitle)}</h3>
       <p>${escape(c.footer.support)}</p>
     </div>
-    <a class="knopf knopf-rand" href="${SITE.support}" rel="noopener">${escape(c.footer.supportButton)}</a>
+    <a class="knopf knopf-hell" href="${SITE.support}" rel="noopener">${escape(c.footer.supportButton)}</a>
   </div>`
       : '';
   return `<footer class="fuss${closing ? ' fuss-schluss' : ''}">
@@ -169,7 +160,7 @@ ${header(c, kind, path)}
 <main id="inhalt">
 ${main}
 </main>
-${footer(c, kind, path, context)}
+${footer(c, kind, path)}
 </body>
 </html>
 `;
@@ -177,28 +168,17 @@ ${footer(c, kind, path, context)}
 
 // ── The landing page ──────────────────────────────────────────────────────────────────────────
 
-/**
- * The button that downloads the installer for the visitor's system. The page's script finds the
- * system and sets the file; without the script, or on a phone, it leads to the download page.
- */
-function downloadButton(c: Content, path: string, variant = ''): string {
-  return `<a class="knopf${variant ? ` ${variant}` : ''} laden" href="${relative(path, PATHS.download[c.lang])}">${escape(c.hero.button)}</a>`;
-}
-
-/** The line under a download button: the version and the way to every system, or that it is on its way. */
-function downloadNote(c: Content, path: string, release: Release | null, template: string): string {
-  if (!release) return escape(c.hero.soon);
-  return `${escape(fill(template, { version: release.version }))} <a href="${relative(path, PATHS.download[c.lang])}">${escape(c.hero.all)}</a>`;
-}
-
 function hero(c: Content, path: string, context: RenderContext): string {
-  const note = downloadNote(c, path, context.release, c.hero.version);
+  const release = context.release;
+  const note = release
+    ? `${escape(fill(c.hero.version, { version: release.version }))} <a href="#download">${escape(c.hero.all)}</a>`
+    : escape(c.hero.soon);
   return `<section class="buehne" aria-labelledby="titel">
   <h1 id="titel" class="anzeige">${escape(c.hero.title[0])}<br>${escape(c.hero.title[1])}</h1>
   <div class="buehne-zeile">
     <p class="vorspann">${inline(c.hero.lead)}</p>
     <div class="buehne-aktion">
-      ${downloadButton(c, path)}
+      <a class="knopf laden" href="#download">${escape(c.hero.button)}</a>
       <p class="klein leise">${note}</p>
     </div>
   </div>
@@ -316,9 +296,9 @@ function downloads(c: Content, path: string, release: Release | null): string {
   const intro = release
     ? escape(fill(c.download.released, { version: release.version, date: formatDate(release.publishedAt, c.locale) }))
     : escape(c.download.none);
-  return `<section class="abschnitt herunterladen" aria-labelledby="download-titel">
+  return `<section class="abschnitt herunterladen" id="download" aria-labelledby="download-titel">
   <div class="herunterladen-kopf">
-    <h1 id="download-titel">${escape(c.download.title)}</h1>
+    <h2 id="download-titel">${escape(c.download.title)}</h2>
     <div class="herunterladen-vorspann">
       <p>${intro}</p>
       <p class="klein leise">${escape(c.download.liability)} <a href="${relative(path, liabilityPath(c.lang))}">${escape(c.download.liabilityLink)}</a></p>
@@ -382,19 +362,12 @@ export function homePage(lang: Lang, context: RenderContext): string {
     hero(c, path, context),
     backup(c),
     migrate(c, path, context),
-    commandLine(c),
     questions(c),
+    commandLine(c),
+    downloads(c, path, context.release),
     downloadData(c, path, context.release),
   ].join('\n');
   return frame(c, 'home', path, c.meta.title, c.meta.description, main, context);
-}
-
-/** Every installer with its checksum, and checking a downloaded file. */
-export function downloadPage(lang: Lang, context: RenderContext): string {
-  const c = CONTENT[lang];
-  const path = PATHS.download[lang];
-  const main = [downloads(c, path, context.release), downloadData(c, path, context.release)].join('\n');
-  return frame(c, 'download', path, c.download.meta.title, c.download.meta.description, main, context);
 }
 
 /** Links of a text to a path of this site ("/assets/…"), made relative to the page. */

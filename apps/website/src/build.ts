@@ -14,7 +14,7 @@ import { dirname, join, relative as relativePath, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { SITE } from './config.ts';
-import { downloadPage, homePage, legalPage, notFoundPage, sitemap, type ImageSizes } from './pages.ts';
+import { homePage, legalPage, notFoundPage, sitemap, type ImageSizes } from './pages.ts';
 import { PATHS } from './paths.ts';
 import { pngSize } from './png.ts';
 import { belongsTo, checksumList, DOWNLOADS, exampleRelease, installerName, isFeed, latestVersion, parseInstaller, releaseOf, SLOTS, type LocalFile, type Release } from './release.ts';
@@ -139,7 +139,6 @@ async function main(): Promise<void> {
   rmSync(out, { recursive: true, force: true });
   for (const lang of ['en', 'de'] as const) {
     write(out, PATHS.home[lang], homePage(lang, context));
-    write(out, PATHS.download[lang], downloadPage(lang, context));
     write(out, PATHS.imprint[lang], legalPage(lang, 'imprint', context));
     write(out, PATHS.privacy[lang], legalPage(lang, 'privacy', context));
   }

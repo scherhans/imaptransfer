@@ -11,7 +11,7 @@ export interface Content {
   /** For dates and numbers. */
   locale: string;
   meta: { title: string; description: string };
-  nav: { skip: string; label: string; features: string; cli: string; language: string; download: string };
+  nav: { skip: string; language: string; download: string };
   preview: string;
   hero: {
     /** The headline as it breaks: two lines on every width. */
@@ -36,8 +36,6 @@ export interface Content {
   };
   cli: { title: string; text: string; code: string; exit: string };
   download: {
-    /** The download page's title and description for search engines and links. */
-    meta: { title: string; description: string };
     title: string;
     released: string;
     /** Per system: its name, and a sentence that helps choose among its installers. */
@@ -67,8 +65,6 @@ export interface Content {
   footer: {
     title: string;
     text: string;
-    /** Under the download button of the closing scene; {version} is filled in. */
-    download: string;
     /** The invitation to support, with its heading and button, in the closing scene. */
     supportTitle: string;
     support: string;
@@ -90,7 +86,7 @@ export const en: Content = {
     description:
       'Free, open-source app for macOS, Windows and Linux. Backs up mail accounts as .eml files, restores them and moves them from one provider to another.',
   },
-  nav: { skip: 'Skip to content', label: 'Main', features: 'Features', cli: 'Command line', language: 'Deutsch', download: 'Download' },
+  nav: { skip: 'Skip to content', language: 'Deutsch', download: 'Download' },
   preview: 'Preview with example data. The downloads on this page are not real.',
   hero: {
     title: ['Back up and', 'move your mail'],
@@ -175,10 +171,6 @@ export const en: Content = {
     exit: 'Exit codes tell a script what happened: `0` done, `2` done but some messages failed, `1` failed, `130` stopped.',
   },
   download: {
-    meta: {
-      title: 'Download: IMAP Transfer',
-      description: 'IMAP Transfer for macOS, Windows and Linux, every file with its checksum, plus the command line and Docker.',
-    },
     title: 'Download',
     released: 'Version {version}, released on {date}. Checksums: SHA-256.',
     systems: {
@@ -218,7 +210,6 @@ export const en: Content = {
   footer: {
     title: 'Your mail stays with you.',
     text: 'No telemetry, no account, no cloud. The app only talks to your mail servers, and to GitHub to look for updates.',
-    download: 'Version {version} for macOS, Windows and Linux.',
     supportTitle: 'Free, and it stays that way',
     support: 'Did IMAP Transfer save you some work? A coffee supports its development.',
     supportButton: 'Buy me a coffee',
@@ -239,7 +230,7 @@ export const de: Content = {
     description:
       'Kostenlose Open-Source-App für macOS, Windows und Linux. Sichert Mailkonten als .eml-Dateien, spielt sie zurück und zieht sie von einem Anbieter zum anderen um.',
   },
-  nav: { skip: 'Zum Inhalt', label: 'Hauptmenü', features: 'Funktionen', cli: 'Kommandozeile', language: 'English', download: 'Herunterladen' },
+  nav: { skip: 'Zum Inhalt', language: 'English', download: 'Herunterladen' },
   preview: 'Vorschau mit Beispieldaten. Die Downloads auf dieser Seite sind nicht echt.',
   hero: {
     title: ['Mails sichern', 'und umziehen'],
@@ -324,10 +315,6 @@ export const de: Content = {
     exit: 'Der Rückgabewert sagt einem Skript, was passiert ist: `0` fertig, `2` fertig, aber einige Mails fehlgeschlagen, `1` fehlgeschlagen, `130` abgebrochen.',
   },
   download: {
-    meta: {
-      title: 'Herunterladen: IMAP Transfer',
-      description: 'IMAP Transfer für macOS, Windows und Linux, jede Datei mit Prüfsumme, dazu die Kommandozeile und Docker.',
-    },
     title: 'Herunterladen',
     released: 'Version {version}, erschienen am {date}. Prüfsummen: SHA-256.',
     systems: {
@@ -367,7 +354,6 @@ export const de: Content = {
   footer: {
     title: 'Ihre Mails bleiben bei Ihnen.',
     text: 'Keine Nutzungsstatistik, kein Konto, keine Cloud. Die App spricht nur mit Ihren Mailservern, und mit GitHub, um nach Updates zu sehen.',
-    download: 'Version {version} für macOS, Windows und Linux.',
     supportTitle: 'Kostenlos, und das bleibt so',
     support: 'Hat IMAP Transfer Ihnen Arbeit erspart? Mit einem Kaffee unterstützen Sie die Entwicklung.',
     supportButton: 'Einen Kaffee spendieren',

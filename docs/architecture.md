@@ -2,7 +2,7 @@
 
 ```
 apps/desktop      Electron + Vue: the app for everyone
-apps/website      imaptransfer.com: landing page, download page with checksums, legal pages
+apps/website      imaptransfer.com: landing page with downloads and checksums, legal pages
 packages/cli      command line: servers, NAS, cron
 packages/core     the engine both of them use
 ```
