@@ -49,10 +49,10 @@ linux:
     - target: deb
       arch: [x64, arm64]
   category: Utility
-  maintainer: Sebastian Scherhans <sebastian@imaptransfer.com>
+  maintainer: Sebastian Scherhans <hello@imaptransfer.com>
   synopsis: Back up, restore and migrate IMAP mail accounts
   artifactName: imaptransfer-${version}-linux-${arch}.${ext}
 publish:
   provider: github
-  owner: scherhans
+  owner: sebastian-scherhans
   repo: imaptransfer

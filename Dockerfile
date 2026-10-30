@@ -1,6 +1,6 @@
 # Command line version of imaptransfer, e.g. for a NAS or a server that backs up every night.
 #   docker run --rm -v /volume1/backups/anna:/backup -e IMAPTRANSFER_PASSWORD=… \
-#     ghcr.io/scherhans/imaptransfer backup /backup --user anna@gmx.de
+#     ghcr.io/sebastian-scherhans/imaptransfer backup /backup --user anna@gmx.de
 FROM node:24-alpine AS build
 WORKDIR /src
 RUN corepack enable
