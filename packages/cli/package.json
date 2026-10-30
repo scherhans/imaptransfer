@@ -1,6 +1,6 @@
 {
   "name": "imaptransfer",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Back up, restore and migrate IMAP mail accounts from the command line",
   "license": "MIT",
   "type": "module",
