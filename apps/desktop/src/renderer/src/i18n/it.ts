@@ -23,6 +23,12 @@ const it: typeof de = {
     },
     weakSecrets: 'Questo sistema non ha un portachiavi. Le password sono salvate su disco solo offuscate.',
     accountsProblem: 'Problema con il file degli account:',
+    updates: {
+      label: 'Cerca nuove versioni all’avvio',
+      text: 'A ogni avvio IMAP Transfer può chiedere a GitHub se c’è una nuova versione e installarla. GitHub riceve così il tuo indirizzo IP. Puoi cambiare questa scelta in qualsiasi momento in fondo alla barra laterale.',
+      privacy: 'Informativa sulla privacy',
+      privacyUrl: 'https://imaptransfer.com/privacy/',
+    },
   },
   welcome: {
     title: 'Benvenuto in IMAP Transfer',

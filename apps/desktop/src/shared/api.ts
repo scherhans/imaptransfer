@@ -111,6 +111,8 @@ export interface Settings {
   theme: ThemeChoice;
   language: LanguageChoice;
   accountOrder: AccountOrder;
+  /** Whether the app looks for new versions at start; null until the user has been asked. */
+  updateCheck: boolean | null;
 }
 
 /** How far the test run for duplicate mail is. */
@@ -129,6 +131,8 @@ export interface AppInfo {
   secretStorage: 'os' | 'weak';
   /** The account file could not be read as it should; what happened, for the window to show. */
   accountsProblem: string | null;
+  /** False in the Microsoft Store package, which the Store updates: the app then asks nothing and contacts no one. */
+  updatesBuiltIn: boolean;
   settings: Settings;
 }
 

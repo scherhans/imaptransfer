@@ -174,8 +174,17 @@ async function main() {
   // frame: without this, the test stalls whenever another window lies on top.
   window.webContents.setBackgroundThrottling(false);
   window.setSize(1120, 760);
-  await waitFor(`!!document.querySelector('.welcome')`);
+  await waitFor(`!!document.querySelector('.welcome') && !!document.querySelector('.update-notice')`);
   await shot('01-welcome');
+
+  // The first start asks about the update check. The answer is kept, and the sidebar can change it.
+  const updateChoice = () => JSON.parse(readFileSync(settingsFile, 'utf8')).updateCheck;
+  await js(`document.querySelector('.update-notice input').click(); document.querySelector('.update-notice button').click(); true`);
+  await waitFor(`!document.querySelector('.update-notice') && !!document.querySelector('.updates input')`);
+  expect(updateChoice() === false, `The update choice was not kept: ${updateChoice()}`);
+  await js(`document.querySelector('.updates input').click(); true`);
+  await sleep(300);
+  expect(updateChoice() === true, `The sidebar did not change the update choice: ${updateChoice()}`);
 
   // The menu holds only what the app has: no Help with an empty search, no View, no Zoom.
   if (process.platform === 'darwin') {

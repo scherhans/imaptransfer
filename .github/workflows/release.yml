@@ -41,10 +41,41 @@ jobs:
         run: pnpm --filter imaptransfer-desktop exec electron-builder --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CSC_LINK: ${{ runner.os == 'macOS' && secrets.MAC_CERTIFICATE_BASE64 || secrets.WINDOWS_CERTIFICATE_BASE64 }}
-          CSC_KEY_PASSWORD: ${{ runner.os == 'macOS' && secrets.MAC_CERTIFICATE_PASSWORD || secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+          CSC_LINK: ${{ runner.os == 'macOS' && secrets.MAC_CERTIFICATE_BASE64 || '' }}
+          CSC_KEY_PASSWORD: ${{ runner.os == 'macOS' && secrets.MAC_CERTIFICATE_PASSWORD || '' }}
           APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
           APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+
+  store:
+    name: Package for the Microsoft Store
+    if: vars.MICROSOFT_STORE_IDENTITY_NAME != ''
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+        env:
+          IMAPTRANSFER_MICROSOFT_CLIENT_ID: ${{ vars.IMAPTRANSFER_MICROSOFT_CLIENT_ID }}
+      - name: Package
+        shell: bash
+        run: >-
+          pnpm --filter imaptransfer-desktop exec electron-builder --win appx --x64 --arm64 --publish never
+          "-c.appx.identityName=$IDENTITY_NAME" "-c.appx.publisher=$PUBLISHER" "-c.appx.publisherDisplayName=$PUBLISHER_NAME"
+        env:
+          IDENTITY_NAME: ${{ vars.MICROSOFT_STORE_IDENTITY_NAME }}
+          PUBLISHER: ${{ vars.MICROSOFT_STORE_PUBLISHER }}
+          PUBLISHER_NAME: ${{ vars.MICROSOFT_STORE_PUBLISHER_NAME }}
+      # Not on the release: the website offers every file there, and this one only goes to Partner Center.
+      - uses: actions/upload-artifact@v7
+        with:
+          name: microsoft-store
+          path: release/*.appx
+          if-no-files-found: error
 
   cli-npm:
     name: Command line on npm

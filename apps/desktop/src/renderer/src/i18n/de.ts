@@ -21,6 +21,12 @@ export default {
     },
     weakSecrets: 'Auf diesem System fehlt ein Schlüsselbund. Passwörter werden nur verschleiert gespeichert.',
     accountsProblem: 'Problem mit der Kontendatei:',
+    updates: {
+      label: 'Beim Start nach neuen Versionen suchen',
+      text: 'IMAP Transfer kann bei jedem Start bei GitHub nachfragen, ob es eine neue Version gibt, und sie installieren. GitHub erhält dabei Ihre IP-Adresse. Sie können das jederzeit unten in der Seitenleiste ändern.',
+      privacy: 'Datenschutzerklärung',
+      privacyUrl: 'https://imaptransfer.com/de/datenschutz/',
+    },
   },
   welcome: {
     title: 'Willkommen bei IMAP Transfer',

@@ -23,6 +23,12 @@ const en: typeof de = {
     },
     weakSecrets: 'This system has no keyring. Passwords are only obfuscated on disk.',
     accountsProblem: 'Problem with the account file:',
+    updates: {
+      label: 'Look for new versions at start',
+      text: 'At every start IMAP Transfer can ask GitHub whether there is a new version and install it. GitHub then receives your IP address. You can change this at any time at the bottom of the sidebar.',
+      privacy: 'Privacy policy',
+      privacyUrl: 'https://imaptransfer.com/privacy/',
+    },
   },
   welcome: {
     title: 'Welcome to IMAP Transfer',

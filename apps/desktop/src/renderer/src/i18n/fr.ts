@@ -23,6 +23,12 @@ const fr: typeof de = {
     },
     weakSecrets: 'Ce système n’a pas de trousseau. Les mots de passe ne sont que brouillés sur le disque.',
     accountsProblem: 'Problème avec le fichier des comptes :',
+    updates: {
+      label: 'Rechercher les nouvelles versions au démarrage',
+      text: 'À chaque démarrage, IMAP Transfer peut demander à GitHub s’il existe une nouvelle version et l’installer. GitHub reçoit alors votre adresse IP. Vous pouvez modifier ce choix à tout moment en bas de la barre latérale.',
+      privacy: 'Politique de confidentialité',
+      privacyUrl: 'https://imaptransfer.com/privacy/',
+    },
   },
   welcome: {
     title: 'Bienvenue dans IMAP Transfer',
