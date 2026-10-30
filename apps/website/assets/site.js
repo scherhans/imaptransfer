@@ -1,7 +1,6 @@
-// The downloads: the buttons for the visitor's system on the start page, and on the download page
-// copying a checksum and checking a downloaded file in the browser. Without this script the
-// buttons lead to the download page, which still offers every file with its checksum and the
-// commands to check it in a terminal; this only adds.
+// The landing page's downloads: the button for the visitor's system, copying a checksum, and
+// checking a downloaded file in the browser. Without this script the page still offers every
+// file with its checksum and the commands to check it in a terminal; this only adds.
 (() => {
   const source = document.getElementById('daten');
   if (!source) return;

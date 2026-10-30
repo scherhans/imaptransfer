@@ -4,7 +4,7 @@ import { dirname, join, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, it } from 'node:test';
 import { formatSize, inline, relative } from '../src/html.ts';
-import { downloadPage, homePage, legalPage, notFoundPage, type ImageSizes, type RenderContext } from '../src/pages.ts';
+import { homePage, legalPage, notFoundPage, type ImageSizes, type RenderContext } from '../src/pages.ts';
 import { liabilityPath, PATHS } from '../src/paths.ts';
 import { exampleRelease, releaseOf, SLOTS } from '../src/release.ts';
 
@@ -18,7 +18,6 @@ function pages(context: RenderContext): Map<string, string> {
   const result = new Map<string, string>();
   for (const lang of ['en', 'de'] as const) {
     result.set(PATHS.home[lang], homePage(lang, context));
-    result.set(PATHS.download[lang], downloadPage(lang, context));
     result.set(PATHS.imprint[lang], legalPage(lang, 'imprint', context));
     result.set(PATHS.privacy[lang], legalPage(lang, 'privacy', context));
   }
@@ -100,10 +99,10 @@ describe('pages', () => {
     }
   });
 
-  it('offer every built installer on the download page with its checksum, and keep a place for the others', () => {
-    const page = withRelease.get('/de/download/') ?? '';
+  it('offer every built installer from this site with its checksum, and keep a place for the others', () => {
+    const page = withRelease.get('/de/') ?? '';
     for (const download of real.downloads) {
-      assert.ok(page.includes(`href="../../downloads/${download.name}" download="${download.name}"`), download.name);
+      assert.ok(page.includes(`href="../downloads/${download.name}" download="${download.name}"`), download.name);
       assert.ok(page.includes(`data-summe="${download.sha256}"`), download.name);
     }
     assert.equal(page.match(/class="variante fehlt"/g)?.length, SLOTS.length - real.downloads.length);
@@ -112,34 +111,24 @@ describe('pages', () => {
   });
 
   it('show every button before the first version, as places only, and nothing to check', () => {
-    const page = withoutRelease.get('/download/') ?? '';
+    const page = withoutRelease.get('/') ?? '';
     assert.equal(page.match(/class="variante fehlt"/g)?.length, SLOTS.length);
     assert.match(page, /The first version is not out yet/);
-    assert.match(withoutRelease.get('/de/download/') ?? '', /Die erste Version ist noch nicht erschienen/);
+    assert.match(withoutRelease.get('/de/') ?? '', /Die erste Version ist noch nicht erschienen/);
     assert.doesNotMatch(page, /id="daten"/);
-    assert.doesNotMatch(withoutRelease.get('/') ?? '', /id="daten"/);
   });
 
-  it('download from the start page for the visitor\'s system, falling back to the download page, and keep its old anchor', () => {
+  it('are one page: the stage downloads for the visitor\'s system or leads to the downloads below, and every header leads there', () => {
     const home = withRelease.get('/de/') ?? '';
-    assert.ok(home.includes('<a class="knopf laden" href="download/">Herunterladen</a>'), 'stage');
-    assert.ok(home.includes('<a class="knopf knopf-hell laden" href="download/">Herunterladen</a>'), 'closing scene');
-    assert.match(home, /<div class="holen" id="download">/);
-    assert.match(home, /id="daten"/);
+    assert.ok(home.includes('<a class="knopf laden" href="#download">Herunterladen</a>'), 'stage');
+    assert.match(home, /<section class="abschnitt herunterladen" id="download"/);
     assert.match(home, /<section class="feld-dunkel" id="cli"/);
-    assert.doesNotMatch(home, /data-summe=/);
-  });
-
-  it('carry the navigation on every page, and mark the download page as the one shown', () => {
+    assert.match(home, /id="daten"/);
+    assert.doesNotMatch(home, /<nav\b/);
     for (const [path, html] of withRelease) {
       const lang = path.startsWith('/de/') ? 'de' : 'en';
-      const home = PATHS.home[lang];
-      for (const to of [`${home}#backup`, `${home}#cli`, PATHS.download[lang]]) {
-        assert.ok(html.includes(`href="${relative(path, to)}"`), `${path}: no link to ${to}`);
-      }
-      assert.equal(/aria-current="page"/.test(html), path === PATHS.download[lang], path);
+      assert.ok(html.includes(`<a class="knopf knopf-klein" href="${relative(path, `${PATHS.home[lang]}#download`)}">`), `${path}: no way to the downloads`);
     }
-    assert.ok(withRelease.get('/de/download/')?.includes('<a class="knopf knopf-klein" href="./" aria-current="page">Herunterladen</a>'));
   });
 
   it('show the flag of the other language beside its name', () => {
@@ -151,14 +140,14 @@ describe('pages', () => {
     for (const [path, html] of withRelease) {
       assert.ok(html.includes('<a href="https://buymeacoffee.com/scherhans" rel="noopener">'), `${path}: no link to support`);
     }
-    assert.match(withRelease.get('/de/') ?? '', /<div class="unterstuetzen">[\s\S]*?class="knopf knopf-rand" href="https:\/\/buymeacoffee\.com\/scherhans" rel="noopener">Einen Kaffee spendieren</);
-    assert.match(withRelease.get('/') ?? '', /class="knopf knopf-rand" href="https:\/\/buymeacoffee\.com\/scherhans" rel="noopener">Buy me a coffee</);
+    assert.match(withRelease.get('/de/') ?? '', /<div class="unterstuetzen">[\s\S]*?class="knopf knopf-hell" href="https:\/\/buymeacoffee\.com\/scherhans" rel="noopener">Einen Kaffee spendieren</);
+    assert.match(withRelease.get('/') ?? '', /class="knopf knopf-hell" href="https:\/\/buymeacoffee\.com\/scherhans" rel="noopener">Buy me a coffee</);
   });
 
   it('point from the downloads to the liability section of the legal notice, before and after the first version', () => {
     for (const result of [withRelease, withoutRelease]) {
-      assert.ok(result.get('/de/download/')?.includes('<a href="../impressum/#haftung">Mehr zur Haftung</a>'));
-      assert.ok(result.get('/download/')?.includes('<a href="../legal-notice/#liability">About liability</a>'));
+      assert.ok(result.get('/de/')?.includes('<a href="impressum/#haftung">Mehr zur Haftung</a>'));
+      assert.ok(result.get('/')?.includes('<a href="legal-notice/#liability">About liability</a>'));
     }
     assert.match(withRelease.get('/de/impressum/') ?? '', /<h2 id="haftung">Haftung für die App<\/h2><p>[^<]*§ 521 BGB/);
     assert.match(withRelease.get('/legal-notice/') ?? '', /<h2 id="liability">Liability for the app<\/h2><p>[^<]*Section 521 BGB/);
