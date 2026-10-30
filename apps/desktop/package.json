@@ -5,7 +5,7 @@
   "private": true,
   "description": "Back up, restore and migrate IMAP mail accounts",
   "license": "MIT",
-  "author": "Sebastian Scherhans <sebastian@imaptransfer.com>",
+  "author": "Sebastian Scherhans <hello@imaptransfer.com>",
   "homepage": "https://imaptransfer.com",
   "type": "module",
   "main": "./out/main/index.js",

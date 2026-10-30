@@ -4,7 +4,7 @@
  */
 export const SITE = {
   url: 'https://imaptransfer.com',
-  repo: 'scherhans/imaptransfer',
+  repo: 'sebastian-scherhans/imaptransfer',
   email: 'hello@imaptransfer.com',
   /** Voluntary support: a plain link, the site loads nothing from there. */
   support: 'https://buymeacoffee.com/scherhans',

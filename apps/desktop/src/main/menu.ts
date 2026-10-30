@@ -16,7 +16,7 @@ export function installMenu(): void {
     applicationName: 'IMAP Transfer',
     applicationVersion: app.getVersion(),
     copyright: 'Copyright © 2026 Sebastian Scherhans and contributors',
-    credits: 'github.com/scherhans/imaptransfer',
+    credits: 'github.com/sebastian-scherhans/imaptransfer',
   });
   const text = texts().menu;
   const template: MenuItemConstructorOptions[] = [

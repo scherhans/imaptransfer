@@ -1,6 +1,6 @@
 # imaptransfer.com
 
-The website of [IMAP Transfer](https://github.com/scherhans/imaptransfer): one landing page
+The website of [IMAP Transfer](https://github.com/sebastian-scherhans/imaptransfer): one landing page
 with the downloads and their SHA-256 checksums, a legal notice and a privacy policy, in English (`/`)
 and German (`/de/`). Static HTML, no framework, no cookies, no tracking, nothing loaded from other
 servers: fonts and images are served from the site itself.

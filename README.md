@@ -106,7 +106,7 @@ Container image for a NAS or server:
 
 ```sh
 docker run --rm -v /volume1/backups/anna:/backup -e IMAPTRANSFER_PASSWORD \
-  ghcr.io/scherhans/imaptransfer backup /backup --user anna@gmx.de
+  ghcr.io/sebastian-scherhans/imaptransfer backup /backup --user anna@gmx.de
 ```
 
 Exit codes: `0` done, `2` done but some messages failed, `1` failed, `130` stopped, `64` wrong arguments. `--json` prints the report as JSON.

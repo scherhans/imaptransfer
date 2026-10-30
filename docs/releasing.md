@@ -8,13 +8,11 @@
 
 ## Merging
 
-Every commit on `main` carries the author `sebastian@imaptransfer.com`; a ruleset on GitHub refuses any other. Commits made in this folder get it from Git (`~/.gitconfig-imaptransfer`, included for `~/repositories/imaptransfer.com/`). A squash merge on GitHub takes the account's primary address unless told otherwise, so merge with:
+Every commit on `main` carries GitHub's address without a mailbox, `48350772+sebastian-scherhans@users.noreply.github.com`; a ruleset on GitHub refuses any other. Commits made here get it from the global Git setting, and with *Keep my email addresses private* switched on a squash merge on GitHub uses it too:
 
 ```sh
-gh pr merge <number> --squash --author-email sebastian@imaptransfer.com --repo scherhans/imaptransfer
+gh pr merge <number> --squash --repo sebastian-scherhans/imaptransfer
 ```
-
-In the browser, pick the same address in the merge dialog.
 
 ## Secrets and variables
 
