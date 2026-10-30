@@ -1,7 +1,7 @@
 {
   "name": "imaptransfer-desktop",
   "productName": "IMAP Transfer",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "description": "Back up, restore and migrate IMAP mail accounts",
   "license": "MIT",
