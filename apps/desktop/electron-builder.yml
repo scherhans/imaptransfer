@@ -61,5 +61,5 @@ appx:
   artifactName: imaptransfer-${version}-store-${arch}.${ext}
 publish:
   provider: github
-  owner: sebastian-scherhans
+  owner: scherhans
   repo: imaptransfer

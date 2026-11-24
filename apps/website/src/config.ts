@@ -4,7 +4,7 @@
  */
 export const SITE = {
   url: 'https://www.imaptransfer.com',
-  repo: 'sebastian-scherhans/imaptransfer',
+  repo: 'scherhans/imaptransfer',
   email: 'hello@imaptransfer.com',
 } as const;
 
