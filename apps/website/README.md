@@ -1,6 +1,6 @@
 # imaptransfer.com
 
-The website of [IMAP Transfer](https://github.com/sebastian-scherhans/imaptransfer): one landing page
+The website of [IMAP Transfer](https://github.com/scherhans/imaptransfer): one landing page
 with the downloads and their SHA-256 checksums, a legal notice and a privacy policy. The landing page
 and the privacy policy come in the seven languages of the app, each under its code: English (`/en/`),
 German, French, Spanish, Italian, Dutch and Portuguese (`/de/`, `/fr/` …). The privacy policy in the
