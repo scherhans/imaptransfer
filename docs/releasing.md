@@ -2,8 +2,7 @@
 
 1. Raise the version in `packages/core/package.json`, `packages/core/src/version.ts`, `packages/cli/package.json` and `apps/desktop/package.json`.
 2. Commit, then tag and push: `git tag v0.2.0 && git push origin v0.2.0`.
-3. The [release workflow](../.github/workflows/release.yml) builds the desktop app on macOS, Windows and Linux and uploads it to a **draft** GitHub release, publishes the command line to npm and the container image to `ghcr.io`.
-   The repository moved from `sebastian-scherhans` to the organisation `scherhans` on 24.11.2026; the image follows it and lands at `ghcr.io/scherhans/imaptransfer`. Releases up to then sit at `ghcr.io/sebastian-scherhans/imaptransfer`, which the README, the `Dockerfile` comment and the website texts (`apps/website/src/content.ts`) still name. **With the first release after the move**, switch those to the new address in the same pull request as the version.
+3. The [release workflow](../.github/workflows/release.yml) builds the desktop app on macOS, Windows and Linux and uploads it to a **draft** GitHub release, publishes the command line to npm and the container image to `ghcr.io/scherhans/imaptransfer`. Images up to 0.2.2 stay at `ghcr.io/sebastian-scherhans/imaptransfer`, from before the repository moved to the organisation on 24.11.2026.
 4. Check the draft, write the notes, publish it. The desktop app finds the update on its next start.
 5. Publishing starts the [website workflow](../.github/workflows/website.yml): it downloads the files of the release, builds imaptransfer.com with them and uploads it to mittwald. The download buttons and checksums then show the new version. See [apps/website/README.md](../apps/website/README.md#deploy).
 
